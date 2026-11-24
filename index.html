@@ -1,0 +1,2252 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>调优台 · 淘宝推广调整记录</title>
+  <style>:root {
+  color-scheme: light;
+  --bg: #f8f9fb;
+  --paper: #fff;
+  --ink: #172033;
+  --muted: #748094;
+  --border: #eceef3;
+  --green: #167d65;
+  --green-light: #e5f8ee;
+  --amber: #98600f;
+  --amber-light: #fff4d8;
+  --blue: #3d68bd;
+  --blue-light: #edf3ff;
+  --purple: #27204f;
+  --pink: #df5274;
+  --radius: 24px;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--bg) radial-gradient(#dfe4ed .65px, transparent .65px);
+  background-size: 22px 22px;
+  font: 14px/1.6 "Segoe UI", "Microsoft YaHei", system-ui, sans-serif;
+}
+button, input, textarea, select { font: inherit; }
+button { cursor: pointer; color: inherit; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid #8b73c7;
+  outline-offset: 3px;
+}
+button[disabled] { opacity: .5; cursor: default; }
+[hidden] { display: none !important; }
+p { margin: 0; }
+
+/* Centered header and pill navigation. */
+.shell { min-height: 100vh; }
+.sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 20px max(24px, calc((100vw - 1280px) / 2));
+  background: #ffffffed;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(14px);
+}
+.brand { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.brand-mark {
+  display: grid;
+  place-items: center;
+  width: 39px;
+  height: 39px;
+  border-radius: 13px;
+  color: white;
+  background: #141414;
+  box-shadow: 0 3px 6px #12121a12;
+  font-size: 25px;
+  font-weight: 700;
+}
+.brand strong { display: block; font-size: 19px; letter-spacing: -.8px; }
+.brand strong span { margin-left: 5px; font-size: 13px; letter-spacing: -.3px; }
+.brand small { display: block; color: #8a92a3; font-size: 9px; letter-spacing: 2px; }
+.sidebar nav { display: flex; align-items: center; gap: 5px; flex: 1; }
+.sidebar nav button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border: 1px solid transparent;
+  border-radius: 22px;
+  background: none;
+  color: #69717d;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.sidebar nav button:hover { color: #3c355d; background: #f6f5fa; }
+.sidebar nav button.active { color: var(--pink); background: #fff2f5; border-color: #ffdbe4; }
+.sidebar nav button > span:first-child { font-size: 14px; }
+.nav-count { min-width: 17px; border-radius: 5px; background: #f1e9f7; color: #8c649d; padding: 0 4px; font-size: 10px; }
+.sidebar nav button.active .nav-count { background: #ffe0e9; color: #cc4469; }
+.side-footer { display: flex; align-items: center; gap: 15px; flex-shrink: 0; }
+.offline { display: flex; align-items: center; gap: 5px; color: #7a8391; font-size: 10px; white-space: nowrap; }
+.offline span, .save-dot { width: 6px; height: 6px; border-radius: 50%; background: #16b48b; flex-shrink: 0; }
+.side-link { border: 1px solid #171717; border-radius: 12px; color: #fff; background: #171717; padding: 9px 14px; font-size: 11px; white-space: nowrap; }
+.side-link:hover { background: #34303e; }
+
+/* Grid hero with live summary cards. */
+.top { max-width: 1280px; margin: auto; padding: 16px 0 0; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #8992a3; }
+.top b { margin: 0 10px; font-weight: 400; color: #c5c9d4; }
+.top strong { font-weight: 500; color: #686e81; }
+.main-content { max-width: 1280px; padding: 15px 0 28px; margin: auto; }
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 36px;
+  align-items: center;
+  margin-bottom: 26px;
+  padding: 28px 30px;
+  border: 1px solid #f0f1f6;
+  border-radius: 24px;
+  background-color: #ffffffb5;
+  background-image: linear-gradient(#e9edf466 1px, transparent 1px), linear-gradient(90deg, #e9edf466 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+.hero-main { min-width: 0; }
+.hero-tags { display: flex; align-items: center; gap: 10px; margin-bottom: 15px; font-size: 10px; }
+.hero-tags span:first-child { padding: 3px 9px; border-radius: 18px; border: 1px solid #ffdce5; color: #c95675; background: #fff4f7; font-weight: 600; }
+.hero-tags span:last-child { color: #7c8494; letter-spacing: .1em; }
+.heading { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+.eyebrow { display: none; }
+h1 { font-size: clamp(23px, 2.4vw, 32px); line-height: 1.3; font-weight: 760; letter-spacing: -1px; margin: 0; color: #121a2b; }
+.heading p { margin-top: 8px; color: #718096; font-size: 12px; line-height: 1.8; }
+.hero-meta { margin-top: 14px; display: flex; align-items: center; gap: 7px; font-size: 10px; color: #7f899a; }
+.primary, .secondary, .quiet, .icon-button { white-space: nowrap; }
+.primary, .secondary { padding: 9px 17px; border-radius: 11px; border: 1px solid transparent; font-size: 12px; font-weight: 600; }
+.primary { background: #1c1b1a; color: white; box-shadow: 0 2px 4px #171b231c; }
+.primary:hover { background: #39333f; }
+.secondary { background: #fff; color: #566174; border-color: #e4e6ee; box-shadow: 0 1px 3px #12243b08; }
+.secondary:hover { background: #f7f6fb; }
+.quiet, .icon-button { border: 0; background: none; color: #788297; font-size: 11px; padding: 6px 8px; border-radius: 8px; }
+.quiet:hover, .icon-button:hover { background: #f0edf8; color: #514379; }
+.quiet.accent { color: #7962bf; font-weight: 600; }
+.quiet.danger { color: #ac5c6d; }
+.icon-button { font-size: 22px; line-height: 1; }
+.stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.stat { min-width: 0; background: #ffffffeb; border: 1px solid #edf0f6; border-radius: 15px; padding: 12px 15px; box-shadow: 0 2px 6px #17233c03; }
+.stat strong { display: block; font-size: 25px; line-height: 1.25; letter-spacing: -.6px; font-variant-numeric: tabular-nums; color: #282445; }
+.stat span { display: block; margin-top: 4px; color: #7f8a9e; font-size: 10px; }
+.stat.pending { background: #fffef9eb; }
+.stat.pending strong { color: #ae761b; }
+.stat.done { background: #f8fffbeb; }
+.stat.done strong { color: #159b7e; }
+.stat.amount strong { font-size: clamp(16px, 1.8vw, 24px); overflow-wrap: anywhere; }
+
+/* The main list and purple detail panel form the two-column working area. */
+.workspace { display: grid; grid-template-columns: minmax(0, 1.85fr) minmax(340px, 1fr); gap: 24px; align-items: start; }
+.panel { min-width: 0; border: 1px solid #eceef3; border-radius: var(--radius); background: var(--paper); box-shadow: 0 3px 9px #24304704; overflow: hidden; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 22px 24px 19px; }
+.panel h2, .dialog-head h2 { font-size: 17px; line-height: 1.45; margin: 0; letter-spacing: -.4px; font-weight: 720; }
+.ledger > .panel-head h2::before { content: "▤"; color: #a493ca; margin-right: 9px; font-size: 19px; font-weight: 400; }
+.panel-head p, .dialog-head p { font-size: 11px; color: #828da0; margin-top: 5px; }
+.count { display: inline-block; background: #f3f4f8; color: #7b8599; padding: 3px 8px; border: 1px solid #edeff5; border-radius: 7px; font-size: 10px; white-space: nowrap; font-weight: 500; }
+.filters { display: grid; grid-template-columns: minmax(160px, 1.4fr) minmax(105px, 1fr) minmax(95px, .8fr); gap: 8px; padding: 0 24px 10px; }
+.filters select, .filter-dates input, .search { min-width: 0; border: 1px solid #e9ecf2; background: #fafbfd; color: #727d90; border-radius: 10px; height: 36px; font-size: 11px; }
+.filters select, .filter-dates input { padding: 0 8px; width: 100%; }
+.search { display: flex; align-items: center; gap: 7px; padding: 0 10px; }
+.search span { font-size: 20px; color: #9ca6b9; }
+.search input { width: 100%; min-width: 0; border: 0; outline: 0; background: none; color: var(--ink); font-size: 11px; }
+.search:focus-within { outline: 2px solid #ac9bd8; outline-offset: 1px; }
+.filter-dates { display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #f0f1f6; padding: 0 24px 16px; font-size: 10px; color: #848da0; }
+.filter-dates input { width: auto; max-width: 131px; height: 29px; font-size: 10px; }
+.filter-dates button { margin-left: auto; }
+.list { padding: 4px 16px 14px; max-height: 720px; min-height: 300px; overflow: auto; }
+.record { position: relative; display: block; width: 100%; text-align: left; padding: 20px 12px; border: 1px solid transparent; border-bottom-color: #eef0f5; border-radius: 0; background: #fff; }
+.record:last-child { border-bottom-color: transparent; }
+.record:hover { background: #fcfbfe; }
+.record.active { background: #faf8ff; border-radius: 12px; border-color: #eee8f8; }
+.record.active::before { content: ""; position: absolute; left: 0; top: 25px; bottom: 25px; width: 3px; border-radius: 3px; background: #a48bd8; }
+.record.with-avatar { display: grid; grid-template-columns: 20px 37px minmax(0, 1fr) 23px; align-items: center; gap: 12px; }
+.record-index { font-size: 10px; color: #949eb1; text-align: center; font-variant-numeric: tabular-nums; }
+.record:first-child .record-index { width: 20px; height: 20px; display: grid; place-items: center; background: #fff5ce; color: #a0710b; border-radius: 50%; }
+.record-avatar { display: grid; place-items: center; width: 37px; height: 37px; border-radius: 11px; color: #fff; background: linear-gradient(145deg, #7b8deb, #674ac6); font-weight: 700; font-size: 14px; box-shadow: 0 2px 3px #5d54ad18; }
+.record:nth-child(3n+2) .record-avatar { background: linear-gradient(145deg, #d889b1, #b35da2); }
+.record:nth-child(3n+3) .record-avatar { background: linear-gradient(145deg, #63cbbd, #279b92); }
+.record-content { display: block; min-width: 0; }
+.record-main, .record-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.record-main strong { font-size: 13px; font-weight: 650; overflow-wrap: anywhere; }
+.record-meta { justify-content: flex-start; flex-wrap: wrap; margin-top: 8px; color: #8792a6; font-size: 10px; gap: 5px; }
+.record-meta > span:first-child { margin-right: 4px; }
+.record-note { display: block; margin-top: 8px; font-size: 11px; color: #7e899e; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+.record-arrow { display: grid; place-items: center; width: 23px; height: 23px; color: #9687ad; background: #f0ecf8; border-radius: 7px; }
+.badge, .tag { display: inline-flex; align-items: center; white-space: nowrap; font-size: 9px; line-height: 1.5; font-weight: 600; padding: 2px 6px; border-radius: 4px; }
+.badge.wait { color: #94731a; background: #fff4cf; }
+.badge.done { color: #19866e; background: #dff9ee; }
+.badge.late { color: #bf4e6b; background: #fff0f4; }
+.tag { color: #717d91; background: #f0f2f7; }
+.tag[data-type="出价"] { color: #567ac7; background: #eaf1ff; }
+.tag[data-type="人群"] { color: #8d63bc; background: #f1e7fd; }
+.tag[data-type="预算"] { color: #1b8a73; background: #dcf9ee; }
+.plan-row .record-main span { font-size: 11px; color: #9474b0; }
+.plan-row .record-meta { gap: 14px; }
+
+.detail { position: sticky; top: 108px; min-height: 320px; }
+.detail > .panel-head { align-items: flex-start; padding: 25px 23px; background: linear-gradient(125deg, #29214f, #201c44); color: white; }
+.detail-title { display: flex; align-items: center; flex-wrap: wrap; gap: 9px; }
+.detail .panel-head h2 { font-size: 19px; overflow-wrap: anywhere; }
+.detail .panel-head p, .detail .due-note { color: #c1b8dd; font-size: 10px; }
+.detail .due-note { margin-top: 6px; }
+.detail-kicker { font-size: 9px; letter-spacing: 1.1px; font-weight: 700; color: #edd589; margin-bottom: 9px; }
+.detail > .panel-head .quiet { background: #ffffff12; color: #ddd6ee; padding: 5px 9px; border: 1px solid #ffffff19; }
+.detail > .panel-head .quiet:hover { background: #ffffff24; }
+.detail-body { padding: 3px 22px 20px; }
+.detail-section { padding-top: 17px; }
+.detail-section + .detail-section { border-top: 1px solid #eff0f5; margin-top: 16px; }
+.section-title { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+.section-title h3, .subhead h3 { font-size: 12px; font-weight: 650; margin: 0; }
+.change { border: 1px solid #eeedf5; border-radius: 12px; padding: 10px 11px; background: #fbfafd; margin-bottom: 7px; font-size: 11px; }
+.change b { font-size: 11px; font-weight: 550; overflow-wrap: anywhere; }
+.change .tag { margin-right: 6px; }
+.change-values { display: grid; grid-template-columns: minmax(0, 1fr) 20px minmax(0, 1fr); align-items: center; gap: 6px; margin-top: 6px; }
+.change-values span { white-space: pre-wrap; overflow-wrap: anywhere; }
+.change-values span:first-child { color: #7f899d; }
+.change-values span:nth-child(2) { text-align: center; color: #b2a1c7; }
+.change-values span:last-child { color: #60507c; font-weight: 650; }
+.prose { font-size: 11px; line-height: 1.9; color: #717e93; white-space: pre-wrap; overflow-wrap: anywhere; }
+.periods { display: flex; flex-wrap: wrap; gap: 5px 9px; margin-bottom: 9px; font-size: 9px; color: #828da1; }
+.periods .mismatch { color: var(--amber); }
+.metrics { width: 100%; border-collapse: collapse; table-layout: fixed; font-size: 10px; font-variant-numeric: tabular-nums; }
+.metrics th, .metrics td { text-align: right; padding: 7px 3px; border-bottom: 1px solid #f0f1f6; overflow-wrap: anywhere; }
+.metrics th { font-weight: 500; background: #f9f9fc; color: #7f8aa0; }
+.metrics th:first-child, .metrics td:first-child { width: 28%; text-align: left; padding-left: 5px; }
+.metrics tr:last-child td { border-bottom: 0; }
+.metrics .delta { color: #8b77ab; }
+.metric-hint { color: #818c9f; font-size: 10px; line-height: 1.8; margin-top: 8px; }
+.empty { min-height: 290px; display: grid; place-items: center; align-content: center; text-align: center; gap: 9px; padding: 32px 22px; }
+.empty-icon { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: #f0eafa; color: #9c80c4; font-size: 22px; margin-bottom: 5px; }
+.empty strong { font-size: 15px; font-weight: 650; }
+.empty p { max-width: 300px; font-size: 11px; line-height: 1.8; color: #8691a4; }
+.empty-actions { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; margin-top: 9px; }
+.detail > .empty { min-height: 320px; color: white; background: linear-gradient(130deg, #2d2456, #211b46); }
+.detail > .empty .empty-icon { color: #f1dc8b; background: #ffffff12; border: 1px solid #ffffff19; }
+.detail > .empty strong { font-size: 22px; }
+.detail > .empty p { color: #c1b8df; }
+.page-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; font-size: 10px; color: #929caf; margin-top: 24px; padding: 17px 0 0; }
+.page-footer b { font-size: 8px; letter-spacing: 1.1px; font-weight: 400; margin-left: 9px; color: #a6afbf; }
+
+/* Unified dialogs, forms and attachments. */
+dialog { width: min(720px, calc(100vw - 24px)); max-height: 90vh; overflow: auto; color: var(--ink); background: white; border: 1px solid #eceaf1; border-radius: 23px; padding: 0; box-shadow: 0 24px 100px #22223c33; }
+.compact { width: min(470px, calc(100vw - 24px)); }
+dialog::backdrop { background: #27223b65; backdrop-filter: blur(4px); }
+.dialog-head, .dialog-foot { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 19px 24px; background: #fcfcfe; }
+.dialog-head { border-bottom: 1px solid #eff0f5; }
+.dialog-foot { justify-content: flex-end; border-top: 1px solid #eff0f5; position: sticky; bottom: 0; }
+.dialog-body { padding: 20px 24px; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+.form-grid label, .stack-label, .effect-grid label { display: block; min-width: 0; font-size: 11px; color: #727d90; }
+.dialog-body input:not([type=file]), .dialog-body select, .dialog-body textarea { width: 100%; min-width: 0; padding: 9px 11px; margin-top: 6px; border: 1px solid #e6e9f1; border-radius: 10px; background: #fcfcfe; color: #414c60; font-size: 12px; }
+.dialog-body textarea { resize: vertical; }
+.required { color: #c17089; }
+.subhead { display: flex; align-items: center; justify-content: space-between; margin: 18px 0 8px; }
+.change-field { display: grid; grid-template-columns: 80px minmax(90px, 1fr) minmax(80px, 1fr) minmax(80px, 1fr) 28px; align-items: end; gap: 6px; padding: 10px; margin-bottom: 8px; border: 1px solid #eeebf5; border-radius: 13px; background: #faf9fd; }
+.change-field label { font-size: 10px; color: #7f8a9f; min-width: 0; }
+.change-field .icon-button { padding: 9px 4px; }
+.stack-label { margin-top: 15px; }
+.form-error { min-height: 1em; font-size: 11px; margin-top: 7px; color: #b05871; }
+.notice { padding: 10px 12px; margin-bottom: 13px; border: 1px solid #e8e2f4; border-radius: 11px; background: #f8f5fe; font-size: 11px; color: #806595; }
+.effect-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.effect-fields fieldset { min-width: 0; border: 1px solid #e9e8f1; border-radius: 13px; padding: 12px; margin: 0; }
+.effect-fields legend { font-size: 12px; font-weight: 600; padding: 0 6px; color: #7d6a97; }
+.effect-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.effect-grid label, .effect-grid input[type=date] { font-size: 10px; }
+.help { color: #7a8497; font-size: 12px; line-height: 1.9; }
+.help p + p { margin-top: 12px; }
+.help strong { color: #52516f; }
+.backup-actions { display: grid; gap: 10px; }
+.action-row { border: 1px solid #e9e7f2; border-radius: 13px; background: #fcfbfe; text-align: left; padding: 14px; }
+.action-row:hover { background: #f5f0fc; }
+.action-row strong, .action-row small { display: block; }
+.action-row strong { font-size: 12px; font-weight: 600; color: #69607e; }
+.action-row small { font-size: 10px; color: #8c819c; margin-top: 4px; }
+.record-attachments { border-top: 1px solid #efedf5; margin-top: 15px; }
+.record-attachments .form-error:empty { display: none; }
+.attachment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; margin-top: 10px; }
+.attachment-grid:empty { display: none; }
+.attachment-tile { position: relative; min-width: 0; }
+.attachment-thumb { display: block; width: 100%; overflow: hidden; padding: 0; border: 1px solid #e9e4f2; border-radius: 10px; background: #faf8fc; text-align: left; }
+.attachment-thumb img { display: block; width: 100%; height: 78px; object-fit: contain; background: #f1eef7; }
+.attachment-thumb span { display: block; padding: 4px 6px; color: #81728f; font-size: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.attachment-remove { position: absolute; top: 3px; right: 3px; border: 1px solid #ece6f1; border-radius: 5px; background: #fff; padding: 0 5px; font-size: 15px; line-height: 20px; }
+.image-dialog { width: min(1000px, calc(100vw - 24px)); }
+.image-dialog h2 { overflow-wrap: anywhere; }
+.image-stage { display: grid; place-items: center; padding: 12px; background: #f3f0f8; }
+.image-stage img { display: block; max-width: 100%; max-height: 76vh; object-fit: contain; }
+
+/* Orders use a spacious table within the same card system. */
+.order-filters { grid-template-columns: minmax(180px, 1.5fr) minmax(120px, 1fr) minmax(115px, 1fr) minmax(115px, 1fr); }
+.orders-panel > .panel-head { border-bottom: 1px solid #f2f1f7; margin-bottom: 18px; }
+.orders-panel .filter-dates { border-bottom: 0; }
+.order-table-scroll { overflow: auto; max-height: 65vh; border: 1px solid #eceef4; border-radius: 16px; margin: 0 24px 24px; }
+.order-table { width: 100%; min-width: 850px; border-collapse: collapse; table-layout: fixed; text-align: left; font-size: 12px; }
+.order-table thead { position: sticky; top: 0; z-index: 1; background: #fafbfd; }
+.order-table th { font-weight: 550; color: #78849a; font-size: 11px; }
+.order-table th, .order-table td { padding: 17px 12px; border-bottom: 1px solid #eef0f5; vertical-align: middle; overflow-wrap: anywhere; }
+.order-table tbody tr:last-child td { border-bottom: 0; }
+.order-table tbody tr:hover { background: #fdfbff; }
+.order-table th:first-child { width: 25%; }
+.order-table th:nth-child(2) { width: 12%; }
+.order-table th:nth-child(3) { width: 17%; }
+.order-table th:nth-child(4) { width: 12%; }
+.order-table th:last-child { width: 14%; }
+.order-number { display: block; font-family: Consolas, monospace; font-size: 12px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; color: #4f5671; }
+.order-note { display: block; color: #7f8a9f; font-size: 10px; white-space: pre-wrap; margin-top: 5px; }
+.order-date, .order-amount { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.order-date { color: #78869b; font-size: 11px; }
+.order-amount { font-weight: 600; color: #54516c; }
+.order-status { display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; color: #9b792f; cursor: pointer; font-size: 11px; }
+.order-status.confirmed { color: #188b72; }
+.order-status input, .order-status-fields input { accent-color: #9b80c8; cursor: pointer; }
+.order-actions { white-space: nowrap; }
+.order-actions .quiet { padding: 3px 5px; font-size: 11px; }
+.order-status-fields { display: flex; gap: 24px; margin-top: 18px; }
+.order-status-fields label { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #7b6e93; cursor: pointer; }
+.dialog-body .order-status-fields input { width: 16px; height: 16px; margin: 0; padding: 0; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+#toast { position: fixed; z-index: 8; bottom: 22px; left: 50%; transform: translate(-50%, 120px); opacity: 0; transition: transform .18s, opacity .18s; background: #302747; color: #fff; padding: 11px 18px; border: 1px solid #ffffff22; border-radius: 12px; font-size: 12px; max-width: calc(100vw - 24px); pointer-events: none; box-shadow: 0 5px 25px #29223e26; }
+#toast.show { transform: translate(-50%, 0); opacity: 1; }
+
+@media (max-width: 1675px) {
+  .top, .main-content { margin-left: 28px; margin-right: 28px; }
+  .sidebar { gap: 20px; }
+  .hero { grid-template-columns: minmax(0, 1fr) 320px; gap: 25px; }
+}
+@media (max-width: 1350px) {
+  .sidebar { padding: 15px 24px; gap: 16px; }
+  .brand strong span, .offline { display: none; }
+  .sidebar nav { justify-content: center; }
+  .sidebar nav button { padding: 6px 10px; font-size: 11px; }
+  .side-link { padding: 8px 10px; }
+  .workspace { grid-template-columns: minmax(0, 1.4fr) minmax(310px, 1fr); gap: 18px; }
+  .panel-head { padding: 20px 18px 16px; }
+  .filters { padding-left: 18px; padding-right: 18px; grid-template-columns: 1fr 1fr; }
+  .filters .search { grid-column: 1 / -1; }
+  .filter-dates { padding-left: 18px; padding-right: 18px; gap: 5px; }
+  .filter-dates input { max-width: 116px; }
+  .record.with-avatar { grid-template-columns: 31px minmax(0, 1fr) 20px; gap: 10px; }
+  .record-index { display: none !important; }
+  .record-avatar { width: 31px; height: 31px; border-radius: 9px; }
+  .list { padding: 4px 10px 12px; }
+  .record { padding: 17px 10px; }
+  .record-main { flex-wrap: wrap; }
+  .order-filters { grid-template-columns: 1fr 1fr 1fr; }
+}
+@media (max-width: 1025px) {
+  .sidebar { flex-wrap: wrap; padding: 14px 20px 11px; gap: 11px; }
+  .brand { flex: 1; }
+  .brand small { display: none; }
+  .brand strong span { display: inline; }
+  .side-footer { order: 1; }
+  .sidebar nav { order: 2; flex-basis: 100%; justify-content: flex-start; gap: 8px; }
+  .sidebar nav button { font-size: 12px; }
+  .top, .main-content { margin-left: 20px; margin-right: 20px; }
+  .hero { grid-template-columns: 1fr; padding: 24px; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .stat { padding: 12px; }
+  .hero-meta { margin-top: 12px; }
+  .heading { flex-direction: row; justify-content: space-between; align-items: flex-start; }
+  .heading .primary { margin-top: 4px; }
+  .workspace { grid-template-columns: 1fr; }
+  .detail { position: static; }
+  .list { max-height: 500px; }
+  .record.with-avatar { grid-template-columns: 20px 37px minmax(0, 1fr) 23px; }
+  .record-index { display: block !important; }
+  .record:first-child .record-index { display: grid !important; }
+  .record-avatar { width: 37px; height: 37px; }
+  .record-main { flex-wrap: nowrap; }
+  .detail-body { padding: 3px 24px 22px; }
+  .metrics { font-size: 12px; }
+  .page-footer span:last-child { display: none; }
+}
+@media (max-width: 675px) {
+  .sidebar { padding: 12px; }
+  .brand strong { font-size: 17px; }
+  .brand strong span { font-size: 10px; }
+  .brand-mark { width: 32px; height: 32px; border-radius: 10px; }
+  .sidebar nav { gap: 2px; }
+  .sidebar nav button { font-size: 11px; padding: 6px 9px; }
+  .sidebar nav button > span:first-child { display: none; }
+  .top, .main-content { margin-left: 12px; margin-right: 12px; }
+  .top { padding-top: 10px; }
+  .hero { padding: 20px 17px; gap: 18px; border-radius: 19px; margin-bottom: 18px; }
+  .hero-tags { gap: 7px; font-size: 9px; }
+  .hero-tags span:last-child { letter-spacing: 0; }
+  .heading { flex-direction: column; gap: 12px; }
+  h1 { font-size: 25px; }
+  .heading p { font-size: 11px; }
+  .heading .primary { padding: 8px 13px; }
+  .stats { gap: 6px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat { border-radius: 12px; padding: 10px 12px; }
+  .stat strong { font-size: 23px; }
+  .stat.amount strong { font-size: 19px; }
+  .panel { border-radius: 20px; }
+  .panel h2 { font-size: 15px; }
+  .panel-head { padding: 18px 16px 14px; }
+  .filters { padding-left: 16px; padding-right: 16px; }
+  .filter-dates { padding-left: 16px; padding-right: 16px; gap: 5px; flex-wrap: wrap; }
+  .filter-dates > span:first-child { display: none; }
+  .filter-dates input { max-width: 112px; }
+  .record.with-avatar { grid-template-columns: 31px minmax(0, 1fr); gap: 10px; }
+  .record-index, .record-arrow, .record:first-child .record-index { display: none !important; }
+  .record-avatar { width: 31px; height: 31px; }
+  .record-main { flex-wrap: wrap; gap: 5px; }
+  .record-main strong { font-size: 12px; }
+  .record-note { font-size: 10px; }
+  .detail-body { padding-left: 16px; padding-right: 16px; }
+  .metrics { font-size: 10px; }
+  .effect-fields { grid-template-columns: 1fr; }
+  .change-field { grid-template-columns: 1fr 1fr 28px; }
+  .change-field label:nth-child(3) { grid-row: 2; }
+  .change-field label:nth-child(4) { grid-row: 2; grid-column: 2; }
+  .change-field button { grid-row: 2; grid-column: 3; }
+  .dialog-body, .dialog-head, .dialog-foot { padding-left: 16px; padding-right: 16px; }
+  .form-grid { gap: 10px; }
+  .order-filters { grid-template-columns: 1fr 1fr; }
+  .order-table-scroll { margin-left: 16px; margin-right: 16px; margin-bottom: 16px; }
+  .orders-panel .filter-dates #order-reset { margin-left: 0; }
+  .orders-panel .filter-dates #order-export { margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; transition: none !important; }
+}
+
+/* Linked calendar and daily agenda views. */
+.planner-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(340px, 1fr); gap: 24px; align-items: start; }
+.planner-layout.daily-view { grid-template-columns: 1fr; }
+.calendar-panel .panel-head { flex-wrap: wrap; }
+.calendar-actions { display: flex; gap: 6px; align-items: center; }
+.calendar-actions .secondary { padding: 5px 11px; font-size: 11px; }
+.calendar-weekdays, .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.calendar-weekdays { padding: 0 18px; color: #8d94a6; font-size: 11px; text-align: center; }
+.calendar-weekdays span { padding: 8px 0; }
+.calendar-weekdays span:nth-last-child(-n+2) { color: #b88ba4; }
+.calendar-grid { padding: 0 18px; gap: 4px; }
+.calendar-day { min-height: 76px; min-width: 0; padding: 8px 4px; border: 1px solid transparent; border-radius: 12px; display: flex; flex-direction: column; align-items: center; gap: 8px; background: #fafbfe; color: #5b647a; }
+.calendar-day:hover { background: #f0ebfa; }
+.calendar-day.selected { background: #f0eafa; border-color: #a994cf; box-shadow: inset 0 0 0 1px #bfa9e023; }
+.calendar-day.outside-month { background: #fff; color: #abb2c0; }
+.calendar-day.outside-month.selected { background: #f0eafa; }
+.calendar-day-number { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; font-size: 12px; font-variant-numeric: tabular-nums; }
+.calendar-day.today .calendar-day-number { background: #2c244b; color: white; }
+.calendar-day-count { max-width: 100%; padding: 1px 5px; border-radius: 5px; background: #f7edcf; color: #987325; font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.calendar-day-count.completed { color: #21876f; background: #e3f5ed; }
+.calendar-legend { padding: 18px 20px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 10px; color: #8b93a6; }
+.calendar-mark { width: 6px; height: 6px; border-radius: 50%; background: #c6a04b; }
+.calendar-mark.completed { background: #56ad91; margin-left: 12px; }
+.daily-panel > .panel-head { align-items: flex-start; background: linear-gradient(125deg, #29214f, #201c44); color: white; }
+.daily-panel > .panel-head p { color: #c6bddb; }
+.daily-panel > .panel-head .secondary { background: #ffffff12; border-color: #ffffff25; color: #e0daef; font-size: 11px; padding: 7px 10px; }
+.daily-toolbar { padding: 16px 16px 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 4px; }
+.daily-toolbar input { width: 134px; min-width: 0; border: 1px solid #e8e5ef; border-radius: 8px; background: #faf9fd; padding: 5px; font-size: 11px; color: #6e6284; }
+.daily-toolbar .quiet { padding: 5px; }
+.daily-toolbar #daily-export { margin-left: auto; }
+.daily-progress { padding: 0 20px 14px; border-bottom: 1px solid #f0edf5; }
+.daily-progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 10px; color: #8b80a3; }
+.daily-progress progress { display: block; width: 100%; height: 5px; appearance: none; border: none; border-radius: 6px; accent-color: #a18ac9; overflow: hidden; background: #f0edf5; }
+.daily-progress progress::-webkit-progress-bar { background: #f0edf5; border-radius: 6px; }
+.daily-progress progress::-webkit-progress-value { background: #a18ac9; border-radius: 6px; }
+.daily-progress progress::-moz-progress-bar { background: #a18ac9; border-radius: 6px; }
+.daily-list { padding: 6px 20px 18px; }
+.daily-group h3 { display: flex; align-items: center; gap: 7px; margin: 14px 0 2px; color: #7c6d95; font-size: 11px; font-weight: 600; }
+.daily-group h3 span { padding: 0 5px; color: #9f8bb6; background: #f4effa; border-radius: 4px; font-size: 9px; }
+.daily-row { display: grid; grid-template-columns: 16px 42px minmax(0, 1fr) auto; align-items: start; gap: 9px; padding: 16px 0; border-bottom: 1px solid #f0edf5; }
+.daily-row:last-child { border-bottom: 0; }
+.daily-check { width: 15px; height: 15px; margin: 3px 0 0; accent-color: #9983c1; cursor: pointer; }
+.daily-time { color: #9a8aab; font-size: 10px; padding-top: 2px; white-space: nowrap; }
+.daily-summary { min-width: 0; padding: 0; border: 0; background: none; text-align: left; }
+.daily-summary strong { display: block; font-size: 12px; font-weight: 550; color: #5b5270; overflow-wrap: anywhere; }
+.daily-summary span { display: block; margin-top: 5px; color: #8d879e; font-size: 10px; line-height: 1.8; white-space: pre-wrap; overflow-wrap: anywhere; }
+.daily-summary:hover strong { color: #9d78c6; }
+.daily-row.is-done .daily-summary strong { text-decoration: line-through; color: #a7a0b4; }
+.daily-priority { border-radius: 4px; padding: 1px 5px; background: #f1ebf8; color: #9678b3; font-size: 9px; white-space: nowrap; }
+.daily-priority.high { background: #fff0f4; color: #c76c8a; }
+.daily-priority.low { background: #edf2fb; color: #7c92bb; }
+.daily-title-field { margin-top: 0; margin-bottom: 15px; }
+#daily-delete { margin-right: auto; }
+@media (max-width: 1475px) {
+  .sidebar { flex-wrap: wrap; }
+  .sidebar .brand { flex: 1; }
+  .sidebar .side-footer { order: 1; }
+  .sidebar nav { flex-basis: 100%; order: 2; justify-content: flex-start; }
+  .detail { top: 144px; }
+  .planner-layout { gap: 18px; grid-template-columns: minmax(0, 1.3fr) minmax(320px, 1fr); }
+}
+@media (max-width: 1025px) {
+  .sidebar nav { flex-wrap: wrap; }
+  .planner-layout { grid-template-columns: 1fr; }
+  .calendar-day { min-height: 70px; }
+  .daily-panel .panel-head { padding: 22px; }
+}
+@media (max-width: 675px) {
+  .calendar-grid, .calendar-weekdays { padding-left: 10px; padding-right: 10px; gap: 3px; }
+  .calendar-day { min-height: 64px; padding: 6px 2px; gap: 6px; border-radius: 8px; }
+  .calendar-day-count { padding-left: 2px; padding-right: 2px; font-size: 8px; }
+  .calendar-actions .secondary { padding: 4px 9px; }
+  .calendar-legend { font-size: 9px; padding: 14px 12px; }
+  .daily-panel .panel-head { padding: 18px 16px; }
+  .daily-list { padding-left: 16px; padding-right: 16px; }
+  .daily-row { grid-template-columns: 15px 35px minmax(0, 1fr) auto; gap: 7px; }
+}
+
+/* Glass appearance. Data surfaces retain a light backing for text contrast. */
+:root {
+  --workbench-scale: 1.25;
+  --ink: #17223c;
+  --muted: #4b5974;
+  --border: #687ea52b;
+  --accent: #2158b6;
+  --glass-alpha: .49;
+  --hero-edge-alpha: .53;
+  --panel-alpha: .79;
+  --dialog-alpha: .90;
+  --shadow: 0 18px 46px -28px #263a7380, 0 2px 6px #394d8014;
+  --rim: inset 0 1px 1px #fff, inset 0 -1px 1px #4f679932;
+  --ease-glass: cubic-bezier(.2,.8,.25,1.16);
+  --glass-motion: 1;
+  --ambient-x: 60%;
+  --ambient-y: 20%;
+}
+html { zoom: var(--workbench-scale); }
+
+body { background: #e5edfb; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", system-ui, sans-serif; }
+.glass-wallpaper {
+  position: fixed; inset: 0; overflow: hidden; pointer-events: none;
+  background:
+    radial-gradient(ellipse at 12% 18%, #f8fdff 0%, transparent 49%),
+    radial-gradient(ellipse at 108% 6%, #bac9ff 0%, transparent 62%),
+    radial-gradient(ellipse at 2% 100%, #c1cffd, transparent 68%),
+    linear-gradient(123deg, #d6eafb, #edf3ff 54%, #e5dafa);
+}
+.glass-wallpaper::before {
+  position: absolute; content: ""; inset: 0;
+  background:
+    radial-gradient(ellipse at 82% 141%, transparent 54%, #8c9efa31 58%, #fefeff79 60%, transparent 65%),
+    radial-gradient(ellipse at 3% -48%, transparent 62%, #7798f634 64%, #eaf8ff8c 66%, transparent 72%),
+    radial-gradient(ellipse at 106% 40%, #9a9bee31, transparent 50%);
+}
+.glass-wallpaper::after {
+  position: absolute; content: ""; inset: 0;
+  background: radial-gradient(ellipse 390px 270px at var(--ambient-x) var(--ambient-y), #fff9, transparent 94%);
+  opacity: calc(.48 * var(--glass-motion));
+}
+.shell { position: relative; min-width: 0; min-height: calc(100vh / var(--workbench-scale)); padding-top: 12px; }
+.sidebar, .top, .main-content { width: min(1280px, calc(100% - 48px)); margin-inline: auto; }
+.sidebar {
+  top: 12px; min-height: 68px; gap: 19px; flex-wrap: nowrap;
+  padding: 9px 12px 9px 15px; border-radius: 26px; border: 1px solid #ffffffc4;
+  background: rgb(247 250 255 / var(--glass-alpha));
+  backdrop-filter: blur(30px) saturate(148%);
+  box-shadow: var(--rim), 0 0 0 1px #6275aa22, 0 16px 36px -20px #3b4f8f9c;
+}
+.sidebar.is-scrolled { box-shadow: var(--rim), 0 0 0 1px #6275aa2f, 0 17px 43px -16px #3b4f8f82; }
+.brand { flex: 0 0 auto; gap: 10px; }
+.brand strong { font-size: 19px; color: #1e2b46; letter-spacing: -.035em; }
+.brand-mark {
+  width: 36px; height: 36px; border-radius: 12px; font-size: 23px; color: #fcfdff;
+  background: linear-gradient(150deg, #84adf7 1%, #426fcc 47%, #273c88 95%);
+  box-shadow: inset 0 1px 2px #fff9, inset 0 -2px 2px #11215168, 0 4px 9px #30468338;
+}
+.sidebar nav {
+  position: relative; isolation: isolate; order: 0; flex: 1; flex-basis: auto; justify-content: center;
+  align-items: center; gap: 2px; padding: 3px; border-radius: 20px; min-width: 0;
+  overflow: clip; overflow-clip-margin: 6px;
+}
+.sidebar nav::before {
+  content: ""; position: absolute; z-index: -1; pointer-events: none; inset: 0 auto auto 0;
+  width: var(--pill-width, 0px); height: var(--pill-height, 0px);
+  transform: translate(var(--pill-x, 0px), var(--pill-y, 0px));
+  border-radius: 18px; opacity: 0;
+  background: linear-gradient(159deg, #fff, #e8f2ff 46%, #cbdcfc9e);
+  box-shadow: inset 0 1px 1px #fff, inset 0 -1px 2px #7a98d651, 0 2px 7px #3b59a020;
+}
+.sidebar nav[data-indicator]::before { opacity: 1; }
+[data-glass-motion="on"] .sidebar nav[data-indicator]::before {
+  transition: transform 330ms var(--ease-glass), width 330ms var(--ease-glass), height 330ms var(--ease-glass);
+}
+.sidebar nav button { gap: 6px; padding: 7px 12px; font-size: 12px; font-weight: 550; color: #485775; border: 1px solid transparent; }
+.sidebar nav button.active { color: #174a9b; background: #ecf4ff; border-color: #fff9; }
+.sidebar nav[data-indicator] button.active { background: transparent; border-color: transparent; }
+.sidebar nav button:hover { color: #194caa; background: #ffffff55; }
+.sidebar nav button > span:first-child { font-size: 13px; }
+.nav-count, .sidebar nav button.active .nav-count { background: #d8e6ff; color: #284e94; }
+.side-footer { order: 0; }
+.offline { color: #4f627e; }
+
+.top { margin-top: 12px; padding: 0 5px; color: var(--muted); min-height: 43px; font-size: 12px; }
+.top b { color: #7183a3; }
+.top strong { color: #334765; }
+.workspace-tools { display: flex; align-items: center; gap: 3px; }
+.workspace-tools .quiet { min-height: 32px; }
+.main-content { padding: 6px 0 42px; }
+.hero {
+  gap: 44px; grid-template-columns: minmax(0, 1fr) minmax(300px, 36%);
+  padding: 31px 34px; margin-bottom: 22px; border-radius: 28px;
+  border: 1px solid #fff9; background: linear-gradient(120deg, rgb(252 254 255 / var(--glass-alpha)), rgb(237 243 255 / var(--hero-edge-alpha)));
+  backdrop-filter: blur(9px) saturate(113%); box-shadow: var(--rim), var(--shadow);
+}
+.heading { gap: 19px; }
+h1 { color: #192a4b; font-size: clamp(27px, 3.25vw, 43px); letter-spacing: -.046em; }
+.heading p { color: var(--muted); font-size: 13px; }
+.hero-meta { color: #465e7a; font-size: 11px; }
+.save-dot, .offline span { background: #168267; box-shadow: 0 0 0 3px #31ab8225; }
+.stats { gap: 9px; }
+.stat, .stat.pending, .stat.done {
+  background: linear-gradient(146deg, rgb(255 255 255 / var(--panel-alpha)), rgb(232 240 255 / var(--hero-edge-alpha)));
+  border: 1px solid #fff9; border-radius: 17px; padding: 13px 15px;
+  box-shadow: var(--rim), 0 4px 12px -9px #334a8c70;
+}
+.stat strong { color: #253d67; font-size: 27px; }
+.stat span { color: #4e617f; font-size: 11px; margin-top: 3px; }
+.stat.pending strong { color: #875413; }
+.stat.done strong { color: #116a56; }
+
+.panel {
+  background: rgb(250 252 255 / var(--panel-alpha)); border: 1px solid #ffffffb8; border-radius: 24px;
+  box-shadow: var(--rim), var(--shadow); backdrop-filter: blur(17px) saturate(116%);
+}
+.panel-head p, .dialog-head p, .prose, .metric-hint, .filter-dates, .record-meta, .record-note, .help, .empty p { color: var(--muted); }
+.panel h2 { color: #233650; font-size: 17px; }
+.ledger > .panel-head h2::before { content: none; }
+.count { color: #375274; background: #eaf1ff; border-color: #dce6f8; }
+.record { background: transparent; border-bottom-color: var(--border); }
+.record:hover { background: #fff9; }
+.record.active { background: #dceaff91; border-color: #b4c9eea0; }
+.record.active::before { background: #4574c9; }
+.record.with-avatar { grid-template-columns: 37px minmax(0, 1fr) 23px; }
+.record-main strong { font-size: 14px; }
+.record-meta { font-size: 11px; }
+.record-arrow { background: #e1ebfb; color: #416598; }
+.record-avatar { background: linear-gradient(155deg, #729de2, #4357a2); box-shadow: inset 0 1px 1px #fffc, 0 3px 10px #4460a136; }
+.record:nth-child(3n+2) .record-avatar { background: linear-gradient(155deg, #a28bd4, #674b9e); }
+.record:nth-child(3n+3) .record-avatar { background: linear-gradient(155deg, #55aaad, #27697e); }
+.badge, .tag { font-size: 10px; }
+.badge.wait { color: #6d4707; background: #faedcd; }
+.badge.done { color: #12614f; background: #d5f4e8; }
+.badge.late { color: #8e3550; background: #ffe1eb; }
+.tag { color: #42577a; background: #e6edfa; }
+.tag[data-type="出价"] { color: #315b9c; background: #dbe9ff; }
+.tag[data-type="人群"] { color: #624c8e; background: #efe4fa; }
+.tag[data-type="预算"] { color: #126653; background: #d6f1e8; }
+.detail > .panel-head, .daily-panel > .panel-head,
+.detail > .empty {
+  color: #223a60; background: linear-gradient(147deg, #fbfdffbd, #dce9ffaf 70%, #cddcfd91);
+  border-bottom: 1px solid #6385be2c; box-shadow: inset 0 1px 0 white;
+}
+.detail .panel-head p, .detail .due-note, .daily-panel > .panel-head p, .detail > .empty p { color: #465e81; }
+.detail > .empty .empty-icon, .empty-icon { color: #2c5caa; background: #dfebff; border: 1px solid #fbfdff; }
+.detail > .panel-head .quiet, .daily-panel > .panel-head .secondary { background: #f6fbffc7; color: #264c89; border: 1px solid #fff; }
+.detail > .panel-head .quiet:hover, .daily-panel > .panel-head .secondary:hover { background: #fff; }
+.change, .notice { background: #edf4ffad; border-color: #dce6f6; }
+.change-values span:first-child, .change-values span:last-child, .change-values span:nth-child(2), .metrics .delta { color: #425f89; }
+.periods, .metrics th, .order-table th, .order-date, .order-note { color: #4b607f; }
+.metrics, .order-table { color: #223755; }
+.metrics th, .order-table thead { background: #edf3fc; }
+.order-table tbody tr:hover { background: #edf4ff; }
+.effect-fields fieldset, .change-field { border-color: #dbe6f6; background: #f2f7ff8c; }
+.effect-fields legend, .change-field label { color: #395174; }
+.filter-dates input, .filters select, .search, .daily-toolbar input,
+.dialog-body input:not([type=file]), .dialog-body select, .dialog-body textarea {
+  background: #f9fbffd9; border-color: #c7d5eb; color: #273e60; box-shadow: inset 0 1px 2px #3f629610;
+}
+input::placeholder, textarea::placeholder { color: #64738e; opacity: 1; }
+.search input { background: transparent; box-shadow: none; }
+.search span { color: #4d6386; }
+.quiet { color: #455c7d; }
+.quiet:hover, .icon-button:hover { background: #dce8fc9e; color: #204e9e; }
+.quiet.accent { color: #1d529e; }
+.quiet.danger, .form-error, .required { color: #9f3652; }
+.form-grid label, .stack-label, .effect-grid label, .notice { color: #445a79; }
+.order-status, .daily-priority.high { color: #805315; }
+.order-status.confirmed { color: #116650; }
+.order-status-fields label { color: #425b7e; }
+.order-status input, .order-status-fields input, .daily-check { accent-color: var(--accent); }
+.order-number, .order-amount, .daily-summary strong { color: #274365; }
+.daily-summary span, .daily-progress-label, .daily-time, .daily-group h3, .calendar-weekdays, .calendar-legend { color: #496182; }
+.daily-row.is-done .daily-summary strong { color: #536780; }
+.daily-priority, .daily-group h3 span { color: #404e8e; background: #e5ebfd; }
+.daily-priority.low { color: #4a628a; }
+.daily-priority.high { background: #fff2da; }
+.calendar-day { color: #355273; background: #eff5ffaa; }
+.calendar-day:hover, .calendar-day.selected { background: #dae8ffa8; }
+.calendar-day.selected { border-color: #90addc; }
+.calendar-day.today .calendar-day-number { background: #2457ad; }
+.calendar-day.outside-month { color: #64728b; background: #f7faff70; }
+.calendar-day-count { color: #764e0b; }
+.calendar-day-count.completed { color: #126451; }
+.daily-progress progress { background: #dce8fc; accent-color: var(--accent); }
+.daily-progress progress::-webkit-progress-bar { background: #dce8fc; }
+.daily-progress progress::-webkit-progress-value { background: #567ec9; }
+.daily-progress progress::-moz-progress-bar { background: #567ec9; }
+
+/* Diffused highlights sit above glass without covering or moving controls. */
+.primary, .side-link {
+  border: 1px solid #416ac4; border-radius: 15px; color: #fff;
+  background: linear-gradient(157deg, #3c72cd, #2356ad 56%, #234f9f);
+  box-shadow: inset 0 1px 1px #fff8, inset 0 -2px 2px #1036746e, 0 5px 12px -5px #2f5195ad;
+}
+.primary:hover, .side-link:hover { background: linear-gradient(157deg, #447bd4, #2458b3 55%, #1f4896); }
+.secondary {
+  border: 1px solid #aabfdf85; color: #2c4975; border-radius: 13px;
+  background: linear-gradient(156deg, #fff, #e8f0ffb8 56%, #d5e4fa77);
+  box-shadow: var(--rim), 0 3px 8px -5px #3b599767;
+}
+.secondary:hover { background: #f2f8ff; }
+.hero, .primary, .secondary, .side-link { position: relative; isolation: isolate; }
+.sidebar::after, .hero::after, .primary::after, .secondary::after, .side-link::after, .stat::after, .panel::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: radial-gradient(ellipse 130px 105px at var(--light-x, 50%) var(--light-y, 0%), #ffffffbd, #e7f2ff35 55%, transparent 100%);
+  box-shadow: inset 1px 1px 2px #ffffff85;
+  mix-blend-mode: soft-light;
+  opacity: 0;
+}
+.sidebar::before, .hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  padding: 1.5px;
+  background: radial-gradient(ellipse 210px 115px at var(--light-x, 22%) var(--light-y, 0%), #ffffff, #f4fbff72 60%, transparent 100%);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+.stat { position: relative; }
+.panel:not(.detail) { position: relative; }
+.glass-tracked::after { opacity: calc(.9 * var(--glass-motion)); }
+[data-glass-motion="on"] .glass-tracked::after { transition: opacity 140ms ease; }
+[data-glass-motion="on"] :is(.primary, .secondary, .side-link, .calendar-day, .sidebar nav button) {
+  transition: translate 200ms var(--ease-glass), scale 210ms var(--ease-glass), background-color 160ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  [data-glass-motion="on"] :is(.primary, .secondary, .side-link):hover { translate: 0 -1px; }
+}
+[data-glass-motion="on"] :is(.primary, .secondary, .side-link, .calendar-day, .sidebar nav button):active { scale: .97; translate: 0 1px; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline-color: #235db7; }
+button, input, textarea, select { -webkit-tap-highlight-color: transparent; }
+
+dialog {
+  max-width: calc(100vw / var(--workbench-scale) - 24px);
+  max-height: calc(90vh / var(--workbench-scale));
+  border: 1px solid #fff; border-radius: 26px; background: rgb(250 253 255 / var(--dialog-alpha));
+  color: var(--ink); box-shadow: var(--rim), 0 23px 84px #1e356c47;
+  backdrop-filter: blur(28px) saturate(140%);
+}
+dialog::backdrop { background: #182d553e; backdrop-filter: blur(6px) saturate(124%); }
+[data-glass-motion="on"] dialog[open] { animation: glass-present 270ms var(--ease-glass) both; }
+@keyframes glass-present { from { opacity: 0; transform: translateY(9px) scale(.98); } to { opacity: 1; transform: none; } }
+.dialog-head, .dialog-foot { background: #f2f7ffd6; border-color: #7697ca30; }
+.dialog-foot { backdrop-filter: blur(18px); }
+.action-row { background: #f8fbffd9; border-color: #d7e3f4; }
+.action-row:hover { background: #eaf2ff; }
+.action-row strong { color: #263e63; }
+.action-row small, .attachment-thumb span { color: #4b607f; }
+.image-stage img { max-height: calc(76vh / var(--workbench-scale)); }
+.order-table-scroll { max-height: calc(65vh / var(--workbench-scale)); }
+#toast { color: #fff; background: #233962ed; backdrop-filter: blur(14px); max-width: calc(100vw / var(--workbench-scale) - 24px); }
+.appearance-controls { display: grid; gap: 9px; }
+.appearance-label, .appearance-switch, .appearance-scale { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.appearance-label { font-size: 13px; font-weight: 650; }
+.appearance-label output { font-size: 12px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.appearance-controls .appearance-scale { font-size: 11px; color: var(--muted); }
+.appearance-controls #glass-transparency { accent-color: var(--accent); padding: 0; box-shadow: none; background: transparent; border: 0; margin: 5px 0 0; }
+.appearance-switch { border-top: 1px solid var(--border); margin-top: 8px; padding-top: 15px; cursor: pointer; }
+.appearance-switch strong, .appearance-switch small { display: block; }
+.appearance-switch strong { font-size: 13px; }
+.appearance-switch small { font-size: 11px; color: var(--muted); }
+.appearance-switch #glass-motion { appearance: none; flex: 0 0 40px; width: 40px; height: 23px; padding: 0; margin: 0; border: 1px solid #a8b8d4; border-radius: 20px; background: #dae4f3; box-shadow: inset 0 1px 2px #35558a1c; cursor: pointer; }
+.appearance-switch #glass-motion::before { content: ""; display: block; width: 17px; height: 17px; margin: 2px; background: #fff; border-radius: 50%; box-shadow: 0 2px 3px #16335c36; }
+.appearance-switch #glass-motion:checked { background: #3570c8; border-color: #3570c8; }
+.appearance-switch #glass-motion:checked::before { transform: translateX(17px); }
+[data-glass-motion="on"] .appearance-switch #glass-motion::before { transition: transform 210ms var(--ease-glass); }
+
+@media (max-width: 1338px) {
+  .sidebar { flex-wrap: wrap; gap: 7px; }
+  .sidebar .brand { flex: 1; }
+  .sidebar .side-footer { order: 1; }
+  .sidebar nav { order: 2; flex-basis: 100%; justify-content: flex-start; }
+  .sidebar nav button { padding: 6px 9px; }
+  .hero { grid-template-columns: minmax(0, 1fr) minmax(260px, 37%); gap: 24px; }
+  .detail { top: 126px; }
+  .record.with-avatar { grid-template-columns: 31px minmax(0, 1fr) 23px; }
+}
+@media (max-width: 1025px) {
+  .sidebar, .top, .main-content { width: calc(100% - 32px); }
+  .sidebar nav { flex-wrap: wrap; }
+  .hero { grid-template-columns: 1fr; padding: 23px; gap: 17px; }
+  .stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .record.with-avatar { grid-template-columns: 31px minmax(0, 1fr) 23px; }
+  .detail, .daily-panel { scroll-margin-top: 145px; }
+}
+@media (max-width: 675px) {
+  .sidebar, .top, .main-content { width: calc(100% - 22px); }
+  .shell { padding-top: 8px; }
+  .sidebar { top: 8px; padding: 9px; border-radius: 21px; }
+  .sidebar nav { padding: 1px 0; gap: 2px; }
+  .sidebar nav button { font-size: 11px; padding: 6px 7px; }
+  .brand-mark { width: 32px; height: 32px; }
+  .side-link { font-size: 10px; padding: 6px 9px; }
+  .hero { padding: 19px 16px; }
+  .heading p { font-size: 12px; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat strong { font-size: 24px; }
+  .record.with-avatar { grid-template-columns: 31px minmax(0, 1fr); }
+}
+@supports not (backdrop-filter: blur(1px)) {
+  .sidebar, .hero, .panel, dialog { background: #f5f9ff; }
+}
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .sidebar, .hero, .panel, dialog { background: #f7faff; backdrop-filter: none; border-color: #66799a; }
+  .stat, .stat.pending, .stat.done { background: #fff; border-color: #66799a; }
+  .glass-wallpaper::before, .glass-wallpaper::after, .glass-tracked::after { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .glass-wallpaper::after, .glass-tracked::after { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="glass-wallpaper" aria-hidden="true"></div>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">↗</div><strong>调优台</strong></div>
+    <nav aria-label="工作区">
+      <button type="button" data-view="records"><span aria-hidden="true">▤</span>调整记录</button>
+      <button type="button" data-view="review"><span aria-hidden="true">◷</span>待复盘<span class="nav-count" id="pending-count"></span></button>
+      <button type="button" data-view="plans"><span aria-hidden="true">▦</span>计划汇总</button>
+      <button type="button" data-view="orders"><span aria-hidden="true">▣</span>刷单登记</button>
+      <button type="button" data-view="calendar"><span aria-hidden="true">▦</span>日历</button>
+      <button type="button" data-view="daily"><span aria-hidden="true">✓</span>每日工作计划</button>
+    </nav>
+    <div class="side-footer"><div class="offline"><span></span>离线版</div><button type="button" id="backup-open" class="side-link">⇅　备份与导出</button></div>
+  </aside>
+  <main>
+    <header class="top"><span>工作区 <b>/</b> <strong id="breadcrumb">调整记录</strong></span><div class="workspace-tools"><button type="button" class="quiet" id="appearance-open" aria-haspopup="dialog">◐ 外观</button><button type="button" class="quiet" id="help-open">ⓘ 使用说明</button></div></header>
+    <div class="main-content">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-main">
+          <header class="heading"><div><h1 id="page-title">淘宝推广调整记录</h1><p id="page-description">记录每次改动，回看同一计划调整前后的表现。</p></div><button type="button" class="primary" id="primary-action" data-action="new">＋ 快速录入</button></header>
+          <div class="hero-meta"><span class="save-dot" aria-hidden="true"></span><span id="storage-status" role="status">数据自动保存到此浏览器</span></div>
+        </div>
+        <div class="stats" id="stats" aria-label="记录概览"></div>
+      </section>
+      <div class="workspace" id="workspace">
+        <section class="panel ledger" aria-labelledby="list-title">
+          <header class="panel-head"><div><h2 id="list-title">调整日志</h2><p id="list-caption">按调整时间从近到远排列</p></div><span id="visible-count" class="count"></span></header>
+          <div class="filters">
+            <label class="search"><span aria-hidden="true">⌕</span><input type="search" id="search" placeholder="搜索计划、改动、备注" aria-label="搜索计划、改动、备注"></label>
+            <select id="plan-filter" aria-label="筛选推广计划"><option value="">全部计划</option></select>
+            <select id="type-filter" aria-label="筛选改动类型"><option value="">全部改动</option><option>出价</option><option>人群</option><option>预算</option><option>其他</option></select>
+          </div>
+          <div class="filter-dates"><span>调整日期</span><input id="date-from" type="date" aria-label="调整起始日期"><span>至</span><input id="date-to" type="date" aria-label="调整结束日期"><button type="button" class="quiet" id="clear-filters">重置</button></div>
+          <div id="list" class="list" aria-label="调整记录列表"></div>
+        </section>
+        <section class="panel detail" id="detail" aria-label="调整详情"></section>
+      </div>
+      <section class="panel orders-panel" id="orders-workspace" aria-labelledby="orders-title" hidden>
+        <header class="panel-head"><div><h2 id="orders-title">订单登记簿</h2><p>按日期从近到远排列，可直接勾选收货和评价状态。</p></div><span class="count" id="order-count"></span></header>
+        <div class="filters order-filters">
+          <label class="search"><span aria-hidden="true">⌕</span><input id="order-search" type="search" placeholder="搜索订单号、店铺、备注" aria-label="搜索登记订单"></label>
+          <select id="order-shop" aria-label="按店铺筛选订单"><option value="">全部店铺</option></select>
+          <select id="order-received" aria-label="按收货状态筛选"><option value="">全部收货状态</option><option value="no">未收货</option><option value="yes">已收货</option></select>
+          <select id="order-reviewed" aria-label="按评价状态筛选"><option value="">全部评价状态</option><option value="no">未评价</option><option value="yes">已评价</option></select>
+        </div>
+        <div class="filter-dates"><span>订单日期</span><input id="order-from" type="date" aria-label="订单起始日期"><span>至</span><input id="order-to" type="date" aria-label="订单结束日期"><button type="button" class="quiet" id="order-reset">重置</button><button type="button" class="quiet accent" id="order-export">导出筛选订单</button></div>
+        <div id="order-list"></div>
+      </section>
+      <div class="planner-layout" id="planner-workspace" hidden>
+        <section class="panel calendar-panel" id="calendar-panel" aria-labelledby="calendar-month">
+          <header class="panel-head"><div><h2 id="calendar-month"></h2><p>选择日期，查看和安排当天工作。</p></div><div class="calendar-actions"><button type="button" class="secondary" id="calendar-prev" aria-label="上个月">‹</button><button type="button" class="secondary" data-action="planner-today">今天</button><button type="button" class="secondary" id="calendar-next" aria-label="下个月">›</button></div></header>
+          <div class="calendar-weekdays" aria-hidden="true"><span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span></div>
+          <div class="calendar-grid" id="calendar-grid" role="group" aria-label="日历日期"></div>
+          <p class="calendar-legend"><span class="calendar-mark"></span>有待完成计划 <span class="calendar-mark completed"></span>当天计划已完成</p>
+        </section>
+        <section class="panel daily-panel" aria-labelledby="daily-title">
+          <header class="panel-head"><div><h2 id="daily-title"></h2><p id="daily-caption"></p></div><button type="button" class="secondary" data-action="new-daily">＋ 添加计划</button></header>
+          <div class="daily-toolbar"><button type="button" class="quiet" id="daily-prev" aria-label="前一天">‹</button><input id="daily-date" type="date" min="0100-01-01" max="9999-12-31" aria-label="工作计划日期"><button type="button" class="quiet" id="daily-next" aria-label="后一天">›</button><button type="button" class="quiet accent" data-action="planner-today">回到今天</button><button type="button" class="quiet accent" id="daily-export">导出当天</button></div>
+          <div class="daily-progress"><div class="daily-progress-label"><span id="daily-progress-text"></span><span id="daily-progress-percent"></span></div><progress id="daily-progress" max="100" value="0" aria-label="当天计划完成进度"></progress></div>
+          <div id="daily-list" class="daily-list"></div>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+<dialog id="record-dialog">
+  <form id="record-form">
+    <div class="dialog-head"><div><h2 id="record-title">快速录入</h2><p>同一次操作里的多项改动可以一起登记。</p></div><button type="button" class="icon-button" data-close="record-dialog" aria-label="关闭">×</button></div>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <label>推广计划 <span class="required">*</span><input name="plan" list="known-plans" required maxlength="100" placeholder="输入计划名称，或选择已有计划"><datalist id="known-plans"></datalist></label>
+        <label>调整时间 <span class="required">*</span><input name="time" type="datetime-local" required></label>
+        <label>推广类型<input name="channel" list="channels" maxlength="50" placeholder="例如关键词推广"><datalist id="channels"><option value="关键词推广"><option value="人群推广"><option value="全站推广"></datalist></label>
+        <label>计划复盘日期<input name="reviewOn" type="date"></label>
+      </div>
+      <div class="subhead"><h3>改动明细 <span class="required">*</span></h3><button type="button" class="quiet accent" id="add-change">＋ 添加一项</button></div>
+      <div id="change-fields"></div>
+      <label class="stack-label">调整原因 / 预期<textarea name="reason" rows="2" maxlength="1200" placeholder="例如：高点击、低成交人群消耗偏高，希望降低无效花费。"></textarea></label>
+      <section class="record-attachments" aria-labelledby="attachment-title">
+        <div class="subhead"><h3 id="attachment-title">图片附件 <span class="count" id="attachment-count">0 / 6</span></h3><button type="button" class="secondary" id="add-images">＋ 添加图片</button></div>
+        <p class="metric-hint">支持 JPG、PNG、WebP，也可以直接粘贴截图。图片会自动压缩并随记录保存在本机。</p>
+        <input id="attachment-files" type="file" accept="image/jpeg,image/png,image/webp,.jpg,.jpeg,.png,.webp" multiple hidden>
+        <div class="attachment-grid" id="attachment-draft"></div>
+        <p class="form-error" id="attachment-status" aria-live="polite"></p>
+      </section>
+      <p class="form-error" id="record-error" role="alert"></p>
+    </div>
+    <div class="dialog-foot"><button type="button" class="secondary" data-close="record-dialog">取消</button><button class="primary" type="submit">保存调整</button></div>
+  </form>
+</dialog>
+
+<dialog id="effect-dialog">
+  <form id="effect-form">
+    <div class="dialog-head"><div><h2>补录效果</h2><p id="effect-context"></p></div><button type="button" class="icon-button" data-close="effect-dialog" aria-label="关闭">×</button></div>
+    <div class="dialog-body"><div class="notice">按同一统计口径填写，尽量比较等长的日期区间。空白表示未填，0 表示实际为零。</div><div id="effect-fields" class="effect-fields"></div><label class="stack-label">复盘结论 / 下一步<textarea name="conclusion" rows="2" maxlength="1600" placeholder="例如：投入产出比上升，但成交规模下降，继续观察。"></textarea></label><p class="form-error" id="effect-error" role="alert"></p></div>
+    <div class="dialog-foot"><button type="button" class="secondary" data-close="effect-dialog">取消</button><button type="submit" class="primary">保存效果</button></div>
+  </form>
+</dialog>
+
+<dialog id="order-dialog">
+  <form id="order-form">
+    <div class="dialog-head"><div><h2 id="order-form-title">登记订单</h2><p>订单号按文字保存，保留完整位数。</p></div><button type="button" class="icon-button" data-close="order-dialog" aria-label="关闭订单录入">×</button></div>
+    <div class="dialog-body">
+      <div class="form-grid">
+        <label>订单号 <span class="required">*</span><input name="number" type="text" required maxlength="100" autocomplete="off" placeholder="填写完整订单号"></label>
+        <label>日期 <span class="required">*</span><input name="date" type="date" required></label>
+        <label>店铺 <span class="required">*</span><input name="shop" list="known-shops" required maxlength="100" placeholder="输入或选择店铺"><datalist id="known-shops"></datalist></label>
+        <label>金额（元） <span class="required">*</span><input name="amount" type="text" inputmode="decimal" required maxlength="12" placeholder="例如 99.90"></label>
+      </div>
+      <div class="order-status-fields">
+        <label><input type="checkbox" name="received">已收货</label>
+        <label><input type="checkbox" name="reviewed">已评价</label>
+      </div>
+      <p class="metric-hint">勾选表示已确认，未勾选表示待跟进。</p>
+      <label class="stack-label">备注<textarea name="note" rows="2" maxlength="1200" placeholder="可填写商品、跟进说明等"></textarea></label>
+      <p class="form-error" id="order-error" role="alert"></p>
+    </div>
+    <div class="dialog-foot"><button type="button" class="secondary" data-close="order-dialog">取消</button><button type="submit" class="primary">保存订单</button></div>
+  </form>
+</dialog>
+
+<dialog id="daily-dialog">
+  <form id="daily-form">
+    <div class="dialog-head"><div><h2 id="daily-form-title">添加工作计划</h2><p>为一天安排具体的工作和完成目标。</p></div><button type="button" class="icon-button" data-close="daily-dialog" aria-label="关闭工作计划录入">×</button></div>
+    <div class="dialog-body">
+      <label class="stack-label daily-title-field">工作内容 <span class="required">*</span><input name="title" required maxlength="160" placeholder="例如：检查推广消耗并整理调整建议"></label>
+      <div class="form-grid"><label>计划日期 <span class="required">*</span><input name="date" type="date" min="0100-01-01" max="9999-12-31" required></label><label>计划时间<input name="time" type="time"></label><label>优先级<select name="priority"><option value="high">高优先</option><option value="normal" selected>普通</option><option value="low">低优先</option></select></label><label>完成状态<select name="done"><option value="no">待完成</option><option value="yes">已完成</option></select></label></div>
+      <label class="stack-label">备注<textarea name="note" rows="3" maxlength="2000" placeholder="记录准备事项、目标或跟进说明"></textarea></label>
+      <p class="form-error" id="daily-error" role="alert"></p>
+    </div>
+    <div class="dialog-foot"><button type="button" class="quiet danger" id="daily-delete" hidden>删除计划</button><button type="button" class="secondary" data-close="daily-dialog">取消</button><button type="submit" class="primary">保存计划</button></div>
+  </form>
+</dialog>
+
+<dialog class="compact" id="backup-dialog">
+  <div class="dialog-head"><div><h2>备份与导出</h2><p>备份文件保存在你的电脑上。</p></div><button type="button" class="icon-button" data-close="backup-dialog" aria-label="关闭">×</button></div>
+  <div class="dialog-body backup-actions">
+    <button class="action-row" id="backup-export" type="button"><strong>导出全部备份</strong><small>JSON · 包含推广调整、图片、复盘、订单和每日计划</small></button>
+    <button class="action-row" id="backup-import" type="button"><strong>从备份恢复</strong><small>选择本工作台导出的 JSON 文件</small></button>
+    <button class="action-row" id="csv-export" type="button"><strong>导出当前页面记录</strong><small>CSV · 导出筛选的调整、订单或选中日期的计划</small></button>
+    <input type="file" accept=".json,application/json" id="backup-file" hidden>
+  </div>
+</dialog>
+<dialog class="compact" id="appearance-dialog" aria-labelledby="appearance-title">
+  <div class="dialog-head"><h2 id="appearance-title">外观</h2><button type="button" class="icon-button" data-close="appearance-dialog" aria-label="关闭外观设置">×</button></div>
+  <div class="dialog-body appearance-controls">
+    <label class="appearance-label" for="glass-transparency">玻璃通透度 <output id="glass-percentage" for="glass-transparency">55%</output></label>
+    <input id="glass-transparency" type="range" min="0" max="100" value="55">
+    <div class="appearance-scale" aria-hidden="true"><span>更实色</span><span>更通透</span></div>
+    <label class="appearance-switch"><span><strong>动态光效</strong><small>反光随鼠标移动，并在按下按钮时反馈。</small></span><input id="glass-motion" type="checkbox" role="switch" checked></label>
+  </div>
+  <div class="dialog-foot"><button type="button" class="secondary" id="appearance-reset">恢复默认</button><button type="button" class="primary" data-close="appearance-dialog">完成</button></div>
+</dialog>
+<dialog class="compact" id="help-dialog">
+  <div class="dialog-head"><h2>使用说明</h2><button type="button" class="icon-button" data-close="help-dialog" aria-label="关闭">×</button></div>
+  <div class="dialog-body help"><p><strong>登记调整。</strong>点「快速录入」，填写计划和时间，记录出价、人群、预算等改动的前后值。</p><p><strong>补录效果。</strong>在右侧详情点「补录效果」，手动填写淘宝推广后台的同口径数据。填入任一调整后指标后，记录会从「待复盘」移到已补效果。</p><p><strong>刷单登记。</strong>在侧栏进入后点「登记订单」，填写订单号、日期、店铺和金额。列表中可分别勾选确认收货、确认评价，点击「编辑」可修改或取消确认。按店铺、日期、状态筛选后可导出 CSV，导出的纯数字订单号会加文字前缀以保留位数。</p><p><strong>日历与每日工作计划。</strong>在日历里选择日期，点击「添加计划」填写工作内容、时间、优先级和备注。每日工作计划页面可切换日期、勾选完成、编辑和删除计划，两个页面使用同一份安排。「导出当天」保存所选日期的 CSV，全部 JSON 备份会包含所有日期的计划。</p><p><strong>保存数据。</strong>工作台可以离线打开，数据保存在当前浏览器。请使用同一浏览器和文件位置，更换电脑或清理缓存前先导出 JSON 备份。</p></div>
+</dialog>
+<dialog class="compact" id="confirm-dialog">
+  <form method="dialog"><div class="dialog-head"><h2 id="confirm-title"></h2></div><div class="dialog-body help" id="confirm-text"></div><div class="dialog-foot"><button class="secondary" value="cancel">取消</button><button class="primary" value="confirm">确认</button></div></form>
+</dialog>
+<dialog id="image-dialog" class="image-dialog" aria-labelledby="image-name">
+  <div class="dialog-head"><h2 id="image-name">图片预览</h2><button type="button" class="icon-button" data-close="image-dialog" aria-label="关闭图片预览">×</button></div>
+  <div class="image-stage"><img id="image-preview" alt="附件预览"></div>
+</dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>'use strict';
+
+const $ = selector => document.querySelector(selector);
+const $$ = selector => [...document.querySelectorAll(selector)];
+const storageKey = 'taobao-adjustment-journal-v1';
+const databaseMarker = `${storageKey}-database:${location.pathname}`;
+const maxAttachments = 6;
+const maxImageLength = 750 * 1024;
+const imageDataPattern = /^data:image\/(?:webp|jpeg|png);base64,[A-Za-z0-9+/]+={0,2}$/;
+const changeTypes = ['出价', '人群', '预算', '其他'];
+const rawMetrics = [
+  ['impressions', '展现量', 'count'], ['clicks', '点击量', 'count'],
+  ['cost', '花费', 'money'], ['orders', '成交笔数', 'count'], ['revenue', '成交金额', 'money']
+];
+const derivedMetrics = [
+  ['ctr', '点击率', 'percent', m => divide(m.clicks, m.impressions, 100)],
+  ['cpc', '平均点击花费', 'money', m => divide(m.cost, m.clicks)],
+  ['cvr', '点击成交率', 'percent', m => divide(m.orders, m.clicks, 100)],
+  ['roi', '投入产出比', 'ratio', m => divide(m.revenue, m.cost)]
+];
+const allMetrics = [...rawMetrics, ...derivedMetrics];
+const views = {
+  records: ['调整记录', '调整日志', '按调整时间从近到远排列'],
+  review: ['待复盘', '待复盘记录', '仅显示尚未填入调整后数据的记录'],
+  plans: ['计划汇总', '推广计划', '点击计划查看它的调整历史'],
+  orders: ['刷单登记', '订单登记簿', '按日期从近到远排列'],
+  calendar: ['日历', '工作日历', '按日期查看工作安排'],
+  daily: ['每日工作计划', '每日工作计划', '记录每天的工作与完成情况']
+};
+const emptyPeriod = () => ({from: '', to: '', values: {}});
+const blank = () => ({schema: 1, records: [], orders: [], dailyPlans: []});
+const currency = new Intl.NumberFormat('zh-CN', {style: 'currency', currency: 'CNY'});
+const number = new Intl.NumberFormat('zh-CN', {maximumFractionDigits: 2});
+const escape = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+const pad = value => String(value).padStart(2, '0');
+const dateString = date => `${String(date.getFullYear()).padStart(4, '0')}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+const today = () => dateString(new Date());
+const now = () => {const d = new Date(); return `${dateString(d)}T${pad(d.getHours())}:${pad(d.getMinutes())}`;};
+const formatTime = value => value.replace('T', ' ');
+const isText = (value, max) => typeof value === 'string' && value.length <= max;
+const isDate = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) && !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
+const isTime = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T(?:[01]\d|2[0-3]):[0-5]\d$/.test(value) && isDate(value.slice(0,10));
+const isValue = (value, kind) => typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 1e12 && (kind !== 'count' || Number.isInteger(value));
+const newId = () => globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+
+function validPeriod(period) {
+  if (!period || !period.values || Array.isArray(period.values)) return false;
+  if (!((period.from === '' && period.to === '') || (isDate(period.from) && isDate(period.to) && period.from <= period.to))) return false;
+  return typeof period.values === 'object' && Object.entries(period.values).every(([key, value]) => {
+    const metric = rawMetrics.find(item => item[0] === key);
+    return metric && isValue(value, metric[2]);
+  });
+}
+
+function validState(data) {
+  if (data?.schema !== 1 || !Array.isArray(data.records) || data.records.length > 20000) return false;
+  if (data.orders !== undefined && !validOrders(data.orders)) return false;
+  if (data.dailyPlans !== undefined && !validDailyPlans(data.dailyPlans)) return false;
+  const ids = new Set();
+  return data.records.every(record => {
+    if (!record || !isText(record.id, 100) || !record.id || ids.has(record.id)) return false;
+    ids.add(record.id);
+    return isText(record.plan, 100) && record.plan.trim() && isTime(record.time) &&
+      isText(record.channel, 50) && (record.reviewOn === '' || isDate(record.reviewOn)) &&
+      isText(record.reason, 1200) && isText(record.conclusion, 1600) &&
+      Array.isArray(record.changes) && record.changes.length > 0 && record.changes.length <= 30 &&
+      record.changes.every(change => change && changeTypes.includes(change.type) && isText(change.target, 100) &&
+        isText(change.before, 200) && isText(change.after, 200) && (change.before || change.after)) &&
+      validPeriod(record.before) && validPeriod(record.after) && validAttachments(record.attachments);
+  });
+}
+
+function validOrders(orders) {
+  if (!Array.isArray(orders) || orders.length > 20000) return false;
+  const ids = new Set();
+  const numbers = new Set();
+  return orders.every(order => {
+    if (!order || !isText(order.id, 100) || !order.id || ids.has(order.id)) return false;
+    if (!isText(order.number, 100) || !order.number.trim() || numbers.has(order.number.trim())) return false;
+    ids.add(order.id);
+    numbers.add(order.number.trim());
+    return isDate(order.date) && isText(order.shop, 100) && order.shop.trim() &&
+      Number.isSafeInteger(order.amountCents) && order.amountCents >= 0 && order.amountCents <= 99999999999 &&
+      typeof order.received === 'boolean' && typeof order.reviewed === 'boolean' && isText(order.note, 1200);
+  });
+}
+
+function normalizeState(data) {
+  return {...data, orders: data.orders ?? [], dailyPlans: data.dailyPlans ?? []};
+}
+
+function validAttachments(attachments) {
+  if (attachments === undefined) return true;
+  return Array.isArray(attachments) && attachments.length <= maxAttachments && attachments.every(image =>
+    image && isText(image.name, 180) && isText(image.data, maxImageLength) && imageDataPattern.test(image.data));
+}
+
+let state = blank();
+let readError = '';
+let database = null;
+let storageBlocked = false;
+let view = 'records';
+let selected = '';
+let recordId = '';
+let effectId = '';
+let orderId = '';
+let attachmentDraft = null;
+let toastTimer;
+let unsaved = false;
+let saveVersion = 0;
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(`${storageKey}:${location.pathname}`, 1);
+    request.onupgradeneeded = () => request.result.createObjectStore('journal');
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+function databaseState(db) {
+  return new Promise((resolve, reject) => {
+    const request = db.transaction('journal', 'readonly').objectStore('journal').get('state');
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function loadState() {
+  let previouslyMigrated = false;
+  try {
+    previouslyMigrated = localStorage.getItem(databaseMarker) === '1';
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (!validState(parsed)) throw new Error('invalid local state');
+      state = normalizeState(parsed);
+    }
+  } catch {
+    readError = '无法读取本地缓存，可通过 JSON 备份恢复';
+  }
+
+  let opened;
+  try {
+    opened = await openDatabase();
+    const saved = await databaseState(opened);
+    if (saved !== undefined) {
+      if (!validState(saved)) throw new Error('invalid database state');
+      state = normalizeState(saved);
+      readError = '';
+    } else if (previouslyMigrated) {
+      throw new Error('missing database state');
+    }
+    database = opened;
+  } catch {
+    opened?.close();
+    if (previouslyMigrated || opened) {
+      storageBlocked = true;
+      readError = '无法读取最新记录，当前仅显示升级前的数据，请刷新重试';
+    }
+  }
+}
+
+function writeDatabaseState() {
+  return new Promise((resolve, reject) => {
+    const transaction = database.transaction('journal', 'readwrite');
+    transaction.oncomplete = resolve;
+    transaction.onabort = () => reject(transaction.error);
+    transaction.objectStore('journal').put(state, 'state');
+  });
+}
+
+function toast(message) {
+  $('#toast').textContent = message;
+  $('#toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => $('#toast').classList.remove('show'), 3500);
+}
+
+async function save(message) {
+  const version = ++saveVersion;
+  unsaved = true;
+  $('#storage-status').textContent = '正在保存到此浏览器…';
+  render();
+  try {
+    if (storageBlocked) throw new Error('database unavailable');
+    if (database) {
+      await writeDatabaseState();
+      try {localStorage.setItem(databaseMarker, '1');} catch { /* The database already contains the saved state. */ }
+    } else {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+    }
+    if (version !== saveVersion) return;
+    unsaved = false;
+    $('#storage-status').textContent = '数据已自动保存在此浏览器';
+    toast(message);
+  } catch {
+    if (version !== saveVersion) return;
+    $('#storage-status').textContent = '浏览器缓存不可用，请导出备份';
+    toast('修改已保留在当前页面，请导出 JSON 备份');
+  }
+}
+
+function divide(numerator, denominator, multiplier = 1) {
+  return numerator == null || denominator == null || denominator === 0 ? null : numerator / denominator * multiplier;
+}
+
+function formatMetric(value, kind) {
+  if (value == null) return '—';
+  if (kind === 'money') return currency.format(value);
+  if (kind === 'percent') return `${number.format(value)}%`;
+  if (kind === 'ratio') return `${number.format(value)} 倍`;
+  return number.format(value);
+}
+
+function formatDelta(before, after, kind) {
+  if (before == null || after == null) return '—';
+  const difference = Number((after - before).toFixed(2));
+  const sign = difference > 0 ? '+' : '';
+  if (kind === 'percent') return `${sign}${number.format(difference)} 个百分点`;
+  return sign + formatMetric(difference, kind);
+}
+
+const hasEffects = record => Object.keys(record.after.values).length > 0;
+const overdue = record => !hasEffects(record) && record.reviewOn && record.reviewOn < today();
+const sorted = records => [...records].sort((a, b) => b.time.localeCompare(a.time));
+const plans = () => [...new Set(state.records.map(record => record.plan))].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+const recordFor = id => state.records.find(record => record.id === id);
+
+function statusBadge(record) {
+  if (hasEffects(record)) return '<span class="badge done">已补效果</span>';
+  if (overdue(record)) return '<span class="badge late">复盘逾期</span>';
+  return '<span class="badge wait">待复盘</span>';
+}
+
+function filterRecords() {
+  const query = $('#search').value.trim().toLocaleLowerCase();
+  const plan = $('#plan-filter').value;
+  const type = $('#type-filter').value;
+  const from = $('#date-from').value;
+  const to = $('#date-to').value;
+  return sorted(state.records.filter(record => {
+    if (view === 'review' && hasEffects(record)) return false;
+    if (plan && record.plan !== plan) return false;
+    if (type && !record.changes.some(change => change.type === type)) return false;
+    const date = record.time.slice(0,10);
+    if ((from && date < from) || (to && date > to)) return false;
+    const terms = [record.plan, record.channel, record.reason, record.conclusion,
+      ...record.changes.flatMap(change => [change.type, change.target, change.before, change.after])];
+    return !query || terms.some(term => term.toLocaleLowerCase().includes(query));
+  }));
+}
+
+function empty(title, description, actions = '') {
+  return `<div class="empty"><div class="empty-icon" aria-hidden="true">▤</div><strong>${title}</strong><p>${description}</p>${actions ? `<div class="empty-actions">${actions}</div>` : ''}</div>`;
+}
+
+function recordCard(record) {
+  const types = [...new Set(record.changes.map(change => change.type))];
+  const description = record.changes.map(change => `${change.target || change.type} ${change.before || '—'} → ${change.after || '—'}`).join(' · ');
+  return `<button type="button" class="record with-avatar ${selected === record.id ? 'active' : ''}" data-id="${escape(record.id)}" aria-pressed="${selected === record.id}">
+    <span class="record-avatar" aria-hidden="true">${escape(Array.from(record.plan.replace(/^【.*?】/, '').trim() || record.plan)[0])}</span><span class="record-content">
+    <span class="record-main"><strong>${escape(record.plan)}</strong>${statusBadge(record)}</span>
+    <span class="record-meta"><span>${formatTime(record.time)}</span>${types.map(type => `<span class="tag" data-type="${type}">${type}</span>`).join('')}</span>
+    <span class="record-note">${escape(description)}</span></span><span class="record-arrow" aria-hidden="true">↗</span></button>`;
+}
+
+function planGroups(records) {
+  const groups = new Map();
+  for (const record of records) {
+    if (!groups.has(record.plan)) groups.set(record.plan, []);
+    groups.get(record.plan).push(record);
+  }
+  return groups;
+}
+
+function planCards(groups) {
+  return [...groups].map(([plan, records]) => {
+    const waiting = records.filter(record => !hasEffects(record)).length;
+    return `<button type="button" class="record plan-row" data-plan="${escape(plan)}"><span class="record-main"><strong>${escape(plan)}</strong><span>查看记录 →</span></span>
+      <span class="record-meta"><span>${records.length} 次调整</span><span>${waiting} 次待复盘</span><span>最近 ${formatTime(records[0].time)}</span></span></button>`;
+  }).join('');
+}
+
+function periodLabel(period) {
+  if (!period.from) return '未填统计区间';
+  return period.from === period.to ? period.from : `${period.from} 至 ${period.to}`;
+}
+
+function periodDays(period) {
+  return period.from ? (Date.parse(period.to) - Date.parse(period.from)) / 86400000 + 1 : null;
+}
+
+function effectTable(record) {
+  const before = record.before.values;
+  const after = record.after.values;
+  if (!Object.keys(before).length && !Object.keys(after).length) return '<p class="prose">还没有效果数据。观察后可回来补录。</p>';
+  const rows = allMetrics.map(([key, label, kind, calculate]) => {
+    const a = calculate ? calculate(before) : before[key];
+    const b = calculate ? calculate(after) : after[key];
+    return `<tr><td>${label}</td><td>${formatMetric(a, kind)}</td><td>${formatMetric(b, kind)}</td><td class="delta">${formatDelta(a, b, kind)}</td></tr>`;
+  }).join('');
+  const daysBefore = periodDays(record.before);
+  const daysAfter = periodDays(record.after);
+  const warning = daysBefore && daysAfter && daysBefore !== daysAfter ? '<span class="mismatch">区间天数不同，总量变化需结合天数看</span>' : '';
+  return `<div class="periods"><span>前 · ${periodLabel(record.before)}</span><span>后 · ${periodLabel(record.after)}</span>${warning}</div>
+    <table class="metrics"><thead><tr><th>指标</th><th>调整前</th><th>调整后</th><th>变化</th></tr></thead><tbody>${rows}</tbody></table>
+    <p class="metric-hint">投入产出比 = 成交金额 ÷ 花费。缺少分子、分母或分母为 0 时显示 —。</p>`;
+}
+
+function attachmentTiles(attachments, editable = false) {
+  const source = editable ? 'draft' : 'record';
+  return attachments.map((image, index) => `<div class="attachment-tile">
+    <button type="button" class="attachment-thumb" data-action="preview-image" data-source="${source}" data-index="${index}" aria-label="查看 ${escape(image.name)}">
+      <img src="${image.data}" alt="" loading="lazy"><span>${escape(image.name)}</span>
+    </button>
+    ${editable ? `<button type="button" class="attachment-remove" data-action="remove-image" data-index="${index}" aria-label="移除 ${escape(image.name)}">×</button>` : ''}</div>`).join('');
+}
+
+function attachmentDetails(record) {
+  const images = record.attachments ?? [];
+  if (!images.length) return '';
+  return `<section class="detail-section"><div class="section-title"><h3>图片附件</h3><span class="count">${images.length} 张</span></div>
+    <div class="attachment-grid">${attachmentTiles(images)}</div></section>`;
+}
+
+function showDetail(record) {
+  if (view === 'plans') {
+    $('#detail').innerHTML = empty('按计划回看', '在左侧选择一个计划，查看它在当前日期范围内的调整和复盘。');
+    return;
+  }
+  if (!record) {
+    $('#detail').innerHTML = empty('调整详情', '选择一条记录，即可查看改动前后值和效果数据。');
+    return;
+  }
+  $('#detail').innerHTML = `<header class="panel-head"><div>
+    <div class="detail-title"><h2>${escape(record.plan)}</h2>${statusBadge(record)}</div>
+    <p>${formatTime(record.time)}${record.channel ? ` · ${escape(record.channel)}` : ''}</p>
+    ${record.reviewOn ? `<div class="due-note">计划复盘 · ${record.reviewOn}</div>` : ''}</div>
+    <button type="button" class="quiet" data-action="edit">编辑</button></header>
+    <div class="detail-body"><section class="detail-section"><div class="section-title"><h3>改动明细</h3><span class="count">${record.changes.length} 项</span></div>
+      ${record.changes.map(change => `<div class="change"><span class="tag" data-type="${change.type}">${change.type}</span><b>${escape(change.target || '计划设置')}</b><div class="change-values"><span>${escape(change.before || '—')}</span><span>→</span><span>${escape(change.after || '—')}</span></div></div>`).join('')}
+      ${record.reason ? `<p class="prose">${escape(record.reason)}</p>` : ''}</section>
+    ${attachmentDetails(record)}
+    <section class="detail-section"><div class="section-title"><h3>效果对比</h3><button type="button" class="quiet accent" data-action="effect">${hasEffects(record) ? '编辑效果' : '＋ 补录效果'}</button></div>${effectTable(record)}</section>
+    ${record.conclusion ? `<section class="detail-section"><div class="section-title"><h3>复盘结论</h3></div><p class="prose">${escape(record.conclusion)}</p></section>` : ''}
+    <section class="detail-section"><button type="button" class="quiet danger" data-action="delete">删除此记录</button></section></div>`;
+}
+
+function render() {
+  const waiting = state.records.filter(record => !hasEffects(record)).length;
+  $('#pending-count').textContent = waiting;
+  $('#breadcrumb').textContent = views[view][0];
+  $('#list-title').textContent = views[view][1];
+  $('#list-caption').textContent = views[view][2];
+  $$('[data-view]').forEach(button => {
+    const active = button.dataset.view === view;
+    button.classList.toggle('active', active);
+    if (active) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  });
+  const orderView = view === 'orders';
+  const plannerView = view === 'calendar' || view === 'daily';
+  $('#workspace').hidden = orderView || plannerView;
+  $('#orders-workspace').hidden = !orderView;
+  $('#planner-workspace').hidden = !plannerView;
+  if (plannerView) {
+    $('#page-title').textContent = views[view][0];
+    $('#page-description').textContent = view === 'calendar' ? '按月查看安排，给每一天留出清晰的工作目标。' : '安排当天工作，逐项完成并记录进展。';
+    $('#primary-action').dataset.action = 'new-daily';
+    $('#primary-action').textContent = '＋ 添加计划';
+    renderPlanner();
+    return;
+  }
+  $('#page-title').textContent = orderView ? '刷单登记' : '淘宝推广调整记录';
+  $('#page-description').textContent = orderView ? '登记订单信息，逐项核对收货与评价状态。' : '记录每次改动，回看同一计划调整前后的表现。';
+  $('#primary-action').dataset.action = orderView ? 'new-order' : 'new';
+  $('#primary-action').textContent = orderView ? '＋ 登记订单' : '＋ 快速录入';
+  if (orderView) {
+    renderOrders();
+    return;
+  }
+  const allPlans = plans();
+  const totals = [['累计调整', state.records.length, ''], ['涉及计划', allPlans.length, ''],
+    ['待复盘', waiting, 'pending'], ['已补效果', state.records.length - waiting, 'done']];
+  $('#stats').innerHTML = totals.map(([label, value, color]) => `<div class="stat ${color}"><strong>${value}</strong><span>${label}</span></div>`).join('');
+  const previousPlan = $('#plan-filter').value;
+  const options = allPlans.map(plan => `<option value="${escape(plan)}">${escape(plan)}</option>`).join('');
+  $('#plan-filter').innerHTML = '<option value="">全部计划</option>' + options;
+  $('#plan-filter').value = allPlans.includes(previousPlan) ? previousPlan : '';
+  $('#known-plans').innerHTML = options;
+  const records = filterRecords();
+  const groups = planGroups(records);
+  $('#visible-count').textContent = view === 'plans' ? `${groups.size} 个计划` : `${records.length} 条`;
+  if (!records.some(record => record.id === selected)) selected = records[0]?.id ?? '';
+  if (records.length) $('#list').innerHTML = view === 'plans' ? planCards(groups) : records.map(recordCard).join('');
+  else if (!state.records.length) $('#list').innerHTML = empty('登记第一条推广调整', '例如记录某个计划的出价从 0.80 元调到 0.95 元。', '<button type="button" class="primary" data-action="new">＋ 快速录入</button><button type="button" class="secondary" data-action="demo">载入示例</button>');
+  else $('#list').innerHTML = empty('没有符合条件的记录', '试试更换计划、日期或搜索词。', '<button type="button" class="secondary" data-action="reset">重置筛选</button>');
+  showDetail(records.find(record => record.id === selected));
+}
+
+function parseOrderAmount(value) {
+  const text = value.trim();
+  if (!/^\d{1,9}(?:\.\d{1,2})?$/.test(text)) return null;
+  const [whole, decimals = ''] = text.split('.');
+  return Number(whole) * 100 + Number(decimals.padEnd(2, '0'));
+}
+
+function orderAmountText(cents) {
+  return `${Math.floor(cents / 100)}.${pad(cents % 100)}`;
+}
+
+function orderFor(id) {
+  return state.orders.find(order => order.id === id);
+}
+
+function filterOrders() {
+  const query = $('#order-search').value.trim().toLocaleLowerCase();
+  const shop = $('#order-shop').value;
+  const received = $('#order-received').value;
+  const reviewed = $('#order-reviewed').value;
+  const from = $('#order-from').value;
+  const to = $('#order-to').value;
+  return state.orders.filter(order => {
+    if (shop && order.shop !== shop) return false;
+    if (received && order.received !== (received === 'yes')) return false;
+    if (reviewed && order.reviewed !== (reviewed === 'yes')) return false;
+    if ((from && order.date < from) || (to && order.date > to)) return false;
+    return !query || [order.number, order.shop, order.note].some(value => value.toLocaleLowerCase().includes(query));
+  }).sort((a, b) => b.date.localeCompare(a.date));
+}
+
+function resetOrderFilters() {
+  for (const selector of ['#order-search', '#order-shop', '#order-received', '#order-reviewed', '#order-from', '#order-to']) $(selector).value = '';
+}
+
+function orderStatusControl(order, field, yes, no) {
+  return `<label class="order-status ${order[field] ? 'confirmed' : ''}"><input type="checkbox" data-order-id="${escape(order.id)}" data-order-status="${field}" ${order[field] ? 'checked' : ''} aria-label="订单 ${escape(order.number)} ${yes}"><span>${order[field] ? yes : no}</span></label>`;
+}
+
+function renderOrders() {
+  const shops = [...new Set(state.orders.map(order => order.shop))].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+  const previousShop = $('#order-shop').value;
+  const options = shops.map(shop => `<option value="${escape(shop)}">${escape(shop)}</option>`).join('');
+  $('#order-shop').innerHTML = '<option value="">全部店铺</option>' + options;
+  $('#order-shop').value = shops.includes(previousShop) ? previousShop : '';
+  $('#known-shops').innerHTML = options;
+  const orders = filterOrders();
+  const totalCents = orders.reduce((sum, order) => sum + order.amountCents, 0);
+  const filtered = ['#order-search', '#order-shop', '#order-received', '#order-reviewed', '#order-from', '#order-to'].some(selector => $(selector).value);
+  const totals = [[filtered ? '筛选订单' : '累计订单', orders.length, ''],
+    [filtered ? '筛选金额' : '累计金额', currency.format(totalCents / 100), 'amount'],
+    ['待收货', orders.filter(order => !order.received).length, 'pending'],
+    ['待评价', orders.filter(order => !order.reviewed).length, 'pending']];
+  $('#stats').innerHTML = totals.map(([label, value, color]) => `<div class="stat ${color}"><strong>${value}</strong><span>${label}</span></div>`).join('');
+  $('#order-count').textContent = `${orders.length} / ${state.orders.length} 笔`;
+  if (!orders.length) {
+    $('#order-list').innerHTML = state.orders.length ? empty('没有符合条件的订单', '可调整店铺、日期或收货评价状态。', '<button type="button" class="secondary" data-action="reset-orders">重置筛选</button>') :
+      empty('登记第一笔订单', '订单号、日期、店铺、金额和确认状态可统一管理。', '<button type="button" class="primary" data-action="new-order">＋ 登记订单</button>');
+    return;
+  }
+  $('#order-list').innerHTML = `<div class="order-table-scroll"><table class="order-table"><caption class="visually-hidden">登记订单及收货、评价状态</caption><thead><tr><th scope="col">订单号 / 备注</th><th scope="col">日期</th><th scope="col">店铺</th><th scope="col">金额</th><th scope="col">收货</th><th scope="col">评价</th><th scope="col">操作</th></tr></thead>
+    <tbody>${orders.map(order => `<tr><td><span class="order-number">${escape(order.number)}</span>${order.note ? `<span class="order-note">${escape(order.note)}</span>` : ''}</td>
+      <td class="order-date">${order.date}</td><td>${escape(order.shop)}</td><td class="order-amount">${currency.format(order.amountCents / 100)}</td>
+      <td>${orderStatusControl(order, 'received', '已收货', '未收货')}</td><td>${orderStatusControl(order, 'reviewed', '已评价', '未评价')}</td>
+      <td class="order-actions"><button type="button" class="quiet accent" data-action="edit-order" data-order-id="${escape(order.id)}" aria-label="编辑订单 ${escape(order.number)}">编辑</button><button type="button" class="quiet danger" data-action="delete-order" data-order-id="${escape(order.id)}" aria-label="删除订单 ${escape(order.number)}">删除</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function openOrder(order) {
+  orderId = order?.id ?? '';
+  const form = $('#order-form');
+  form.reset();
+  form.elements.number.value = order?.number ?? '';
+  form.elements.date.value = order?.date ?? today();
+  form.elements.shop.value = order?.shop ?? $('#order-shop').value;
+  form.elements.amount.value = order ? orderAmountText(order.amountCents) : '';
+  form.elements.received.checked = order?.received ?? false;
+  form.elements.reviewed.checked = order?.reviewed ?? false;
+  form.elements.note.value = order?.note ?? '';
+  $('#order-form-title').textContent = order ? '编辑订单' : '登记订单';
+  $('#order-error').textContent = '';
+  $('#order-dialog').showModal();
+  form.elements.number.focus();
+}
+
+$('#order-form').onsubmit = event => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const amountCents = parseOrderAmount(form.get('amount'));
+  const order = {id: orderId || newId(), number: form.get('number').trim(), date: form.get('date'),
+    shop: form.get('shop').trim(), amountCents, received: form.has('received'), reviewed: form.has('reviewed'), note: form.get('note').trim()};
+  if (!validOrders([order])) {
+    $('#order-error').textContent = '请填写完整订单号、有效日期、店铺和非负金额，金额最多保留两位小数。';
+    return;
+  }
+  if (state.orders.some(item => item.id !== order.id && item.number.trim() === order.number)) {
+    $('#order-error').textContent = '这个订单号已登记，请搜索已有订单后编辑。';
+    return;
+  }
+  if (!orderId && state.orders.length >= 20000) {
+    $('#order-error').textContent = '登记已达 20000 笔上限，请先导出备份整理。';
+    return;
+  }
+  if (orderId) state.orders = state.orders.map(item => item.id === orderId ? order : item);
+  else state.orders.unshift(order);
+  resetOrderFilters();
+  view = 'orders';
+  $('#order-dialog').close();
+  save(orderId ? '订单已更新' : '订单已登记');
+};
+
+function resetFilters() {
+  for (const selector of ['#search', '#plan-filter', '#type-filter', '#date-from', '#date-to']) $(selector).value = '';
+}
+
+function appendChange(change = {type:'出价', target:'', before:'', after:''}) {
+  if ($$('.change-field').length >= 30) return toast('单条记录最多添加 30 项改动');
+  const row = document.createElement('div');
+  row.className = 'change-field';
+  row.innerHTML = `<label>类型<select data-field="type">${changeTypes.map(type => `<option ${change.type === type ? 'selected' : ''}>${type}</option>`).join('')}</select></label>
+    <label>对象<input data-field="target" maxlength="100" value="${escape(change.target)}" placeholder="关键词 / 人群包等"></label>
+    <label>调整前<input data-field="before" maxlength="200" value="${escape(change.before)}" placeholder="原值 / 设置"></label>
+    <label>调整后<input data-field="after" maxlength="200" value="${escape(change.after)}" placeholder="新值 / 设置"></label>
+    <button type="button" class="icon-button" data-action="remove-change" aria-label="移除本项改动">×</button>`;
+  $('#change-fields').append(row);
+}
+
+async function prepareImage(file) {
+  if (file.size > 20 * 1024 * 1024) throw new Error('原图超过 20 MB');
+  if (!/^image\/(png|jpeg|webp)$/.test(file.type) &&
+      !(file.type === '' && /\.(jpe?g|png|webp)$/i.test(file.name))) throw new Error('请选择 JPG、PNG 或 WebP 图片');
+  const bitmap = await createImageBitmap(file);
+  try {
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    for (const [size, quality] of [[1920, 0.9], [1920, 0.76], [1440, 0.76], [1024, 0.72], [768, 0.68]]) {
+      const ratio = Math.min(1, size / Math.max(bitmap.width, bitmap.height));
+      canvas.width = Math.max(1, Math.round(bitmap.width * ratio));
+      canvas.height = Math.max(1, Math.round(bitmap.height * ratio));
+      context.imageSmoothingQuality = 'high';
+      context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+      const data = canvas.toDataURL('image/webp', quality);
+      if (data.length <= maxImageLength && imageDataPattern.test(data)) {
+        return {name: (file.name || '粘贴的截图').slice(0, 180), data};
+      }
+    }
+    throw new Error('图片压缩后仍太大');
+  } finally {
+    bitmap.close();
+  }
+}
+
+function renderAttachmentDraft() {
+  const {images, reading} = attachmentDraft;
+  $('#attachment-count').textContent = `${images.length} / ${maxAttachments}`;
+  $('#attachment-draft').innerHTML = attachmentTiles(images, true);
+  $('#add-images').disabled = reading || images.length >= maxAttachments;
+  $('#record-form button[type="submit"]').disabled = reading;
+}
+
+async function addAttachments(files) {
+  const draft = attachmentDraft;
+  if (!draft || draft.reading || !files.length) return;
+  const available = maxAttachments - draft.images.length;
+  if (!available) {
+    $('#attachment-status').textContent = `每条记录最多添加 ${maxAttachments} 张图片`;
+    return;
+  }
+  draft.reading = true;
+  $('#attachment-status').textContent = '正在处理图片…';
+  renderAttachmentDraft();
+  const errors = [];
+  for (const file of files.slice(0, available)) {
+    try {
+      const image = await prepareImage(file);
+      if (attachmentDraft !== draft) return;
+      draft.images.push(image);
+    } catch (error) {
+      if (attachmentDraft !== draft) return;
+      const message = error instanceof DOMException ? '无法读取图片' : error.message;
+      errors.push(`${file.name || '截图'}：${message}`);
+    }
+  }
+  draft.reading = false;
+  if (files.length > available) errors.push(`每条记录最多添加 ${maxAttachments} 张图片`);
+  $('#attachment-status').textContent = errors.join('；');
+  renderAttachmentDraft();
+}
+
+function showImage(image) {
+  if (!image) return;
+  $('#image-name').textContent = image.name;
+  $('#image-preview').src = image.data;
+  $('#image-dialog').showModal();
+}
+
+function openRecord(record) {
+  recordId = record?.id ?? '';
+  const form = $('#record-form');
+  form.reset();
+  for (const field of ['plan', 'channel', 'reviewOn', 'reason']) form.elements[field].value = record?.[field] ?? '';
+  form.elements.time.value = record?.time ?? now();
+  if (!record) form.elements.plan.value = $('#plan-filter').value;
+  $('#record-title').textContent = record ? '编辑调整记录' : '快速录入';
+  $('#record-error').textContent = '';
+  $('#attachment-status').textContent = '';
+  attachmentDraft = {images: [...(record?.attachments ?? [])], reading: false};
+  renderAttachmentDraft();
+  $('#change-fields').replaceChildren();
+  if (record) record.changes.forEach(appendChange);
+  else appendChange();
+  $('#record-dialog').showModal();
+  form.elements.plan.focus();
+}
+
+$('#record-form').onsubmit = event => {
+  event.preventDefault();
+  if (!attachmentDraft || attachmentDraft.reading) return;
+  const fields = new FormData(event.currentTarget);
+  const changes = $$('.change-field').map(row => Object.fromEntries(
+    [...row.querySelectorAll('[data-field]')].map(input => [input.dataset.field, input.value.trim()])
+  )).filter(change => change.before || change.after);
+  const plan = fields.get('plan').trim();
+  const time = fields.get('time');
+  const reviewOn = fields.get('reviewOn');
+  if (!plan || !isTime(time) || !changes.length || (reviewOn && !isDate(reviewOn))) {
+    $('#record-error').textContent = '请填写推广计划、有效的调整时间，以及至少一项改动的前值或后值。';
+    return;
+  }
+  const previous = recordFor(recordId);
+  const record = {
+    id: previous?.id ?? newId(), plan, time, reviewOn, channel: fields.get('channel').trim(),
+    reason: fields.get('reason').trim(), changes, before: previous?.before ?? emptyPeriod(),
+    after: previous?.after ?? emptyPeriod(), conclusion: previous?.conclusion ?? '',
+    attachments: attachmentDraft.images
+  };
+  if (previous) state.records = state.records.map(item => item.id === record.id ? record : item);
+  else state.records.push(record);
+  selected = record.id;
+  view = 'records';
+  resetFilters();
+  $('#record-dialog').close();
+  save(previous ? '调整记录已更新' : '调整记录已保存');
+};
+
+function effectInputs(side, title, period) {
+  return `<fieldset><legend>${title}</legend><div class="effect-grid">
+    <label>开始日期<input type="date" name="${side}-from" value="${period.from}"></label>
+    <label>结束日期<input type="date" name="${side}-to" value="${period.to}"></label>
+    ${rawMetrics.map(([key, label, kind]) => `<label>${label}${kind === 'money' ? '（元）' : ''}<input type="number" name="${side}-${key}" min="0" max="1000000000000" step="${kind === 'count' ? 1 : 0.01}" value="${period.values[key] ?? ''}" placeholder="未填"></label>`).join('')}</div></fieldset>`;
+}
+
+function openEffect(record) {
+  effectId = record.id;
+  $('#effect-context').textContent = `${record.plan} · ${formatTime(record.time)}`;
+  $('#effect-fields').innerHTML = effectInputs('before', '调整前', record.before) + effectInputs('after', '调整后', record.after);
+  $('#effect-form').elements.conclusion.value = record.conclusion;
+  $('#effect-error').textContent = '';
+  $('#effect-dialog').showModal();
+}
+
+function readPeriod(form, side) {
+  const period = {from: form.get(`${side}-from`), to: form.get(`${side}-to`), values: {}};
+  for (const [key] of rawMetrics) {
+    const value = form.get(`${side}-${key}`);
+    if (value !== '') period.values[key] = Number(value);
+  }
+  return period;
+}
+
+$('#effect-form').onsubmit = event => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const before = readPeriod(form, 'before');
+  const after = readPeriod(form, 'after');
+  if (!validPeriod(before) || !validPeriod(after)) {
+    $('#effect-error').textContent = '日期区间请填写完整，结束日期不能早于开始日期。指标应为非负数。';
+    return;
+  }
+  const record = recordFor(effectId);
+  if (!record) return;
+  Object.assign(record, {before, after, conclusion: form.get('conclusion').trim()});
+  if (view === 'review' && hasEffects(record)) view = 'records';
+  $('#effect-dialog').close();
+  save('效果数据已保存');
+};
+
+function confirmAction(title, description, apply) {
+  const dialog = $('#confirm-dialog');
+  $('#confirm-title').textContent = title;
+  $('#confirm-text').textContent = description;
+  dialog.returnValue = '';
+  dialog.onclose = () => {if (dialog.returnValue === 'confirm') apply();};
+  dialog.showModal();
+}
+
+function demoRecords() {
+  const offset = days => {const d = new Date(); d.setDate(d.getDate() + days); return dateString(d);};
+  const first = {id: newId(), plan: '【示例】便携音箱 · 关键词', time: `${offset(-3)}T10:30`, channel: '关键词推广', reviewOn: offset(-1),
+    reason: '观察核心词加价后，成交是否跟上点击增长。', changes: [{type:'出价',target:'便携蓝牙音箱',before:'0.80 元',after:'0.95 元'}],
+    before: {from:offset(-5),to:offset(-4),values:{impressions:8500,clicks:340,cost:272,orders:14,revenue:1386}},
+    after: {from:offset(-2),to:offset(-1),values:{impressions:9800,clicks:431,cost:352,orders:22,revenue:2178}}, conclusion:'本例中点击和成交都有增加，继续观察平均点击花费。'};
+  const second = {id: newId(), plan: '【示例】桌面音响 · 人群', time: `${offset(0)}T09:20`, channel: '人群推广', reviewOn: offset(2),
+    reason: '观察缩减低转化人群预算后的花费和成交。', changes: [{type:'人群',target:'相似兴趣人群',before:'溢价 30%',after:'溢价 15%'},{type:'预算',target:'日预算',before:'300 元',after:'240 元'}],
+    before: emptyPeriod(), after: emptyPeriod(), conclusion: ''};
+  return [first, second];
+}
+
+function download(content, name, type) {
+  const url = URL.createObjectURL(new Blob([content], {type}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = name;
+  link.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function csvCell(value) {
+  let text = String(value ?? '');
+  if (typeof value === 'string' && /^\s*[=+@-]|^[\t\r\n]/.test(text)) text = "'" + text;
+  return `"${text.replaceAll('"','""')}"`;
+}
+
+function exportCsv() {
+  if (view === 'calendar' || view === 'daily') return exportDailyCsv();
+  if (view === 'orders') return exportOrderCsv();
+  const records = filterRecords();
+  if (!records.length) return toast('当前筛选没有可导出的记录');
+  const metricLabels = allMetrics.map(([, label]) => label);
+  const header = ['推广计划','调整时间','推广类型','计划复盘日期','状态','改动明细','调整原因','前区间开始','前区间结束','后区间开始','后区间结束',
+    ...metricLabels.map(label => `调整前${label}`), ...metricLabels.map(label => `调整后${label}`), '复盘结论'];
+  const metrics = period => allMetrics.map(([key, , , calculate]) => calculate ? calculate(period.values) : period.values[key]);
+  const rows = records.map(record => [record.plan, formatTime(record.time), record.channel, record.reviewOn, hasEffects(record) ? '已补效果' : '待复盘',
+    record.changes.map(change => `[${change.type}] ${change.target} ${change.before || '—'} → ${change.after || '—'}`).join('\n'), record.reason,
+    record.before.from, record.before.to, record.after.from, record.after.to, ...metrics(record.before), ...metrics(record.after), record.conclusion]);
+  download('\uFEFF' + [header, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n'), `淘宝推广调整记录-${today()}.csv`, 'text/csv;charset=utf-8');
+  $('#backup-dialog').close();
+  toast(`已导出 ${records.length} 条记录`);
+}
+
+function exportOrderCsv() {
+  const orders = filterOrders();
+  if (!orders.length) return toast('当前筛选没有可导出的订单');
+  const header = ['订单号（文本）', '日期', '店铺', '金额（元）', '是否收货', '是否评价', '备注'];
+  const rows = orders.map(order => [
+    /^\d+$/.test(order.number) ? "'" + order.number : order.number,
+    order.date, order.shop, orderAmountText(order.amountCents), order.received ? '已收货' : '未收货',
+    order.reviewed ? '已评价' : '未评价', order.note
+  ]);
+  download('\uFEFF' + [header, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n'), `订单登记-${today()}.csv`, 'text/csv;charset=utf-8');
+  $('#backup-dialog').close();
+  toast(`已导出 ${orders.length} 笔订单`);
+}
+
+$('#backup-open').onclick = () => $('#backup-dialog').showModal();
+$('#help-open').onclick = () => $('#help-dialog').showModal();
+$('#backup-export').onclick = () => {
+  download(JSON.stringify(state, null, 2), `淘宝推广调整备份-${today()}.json`, 'application/json');
+  $('#backup-dialog').close();
+  toast('备份已导出');
+};
+$('#csv-export').onclick = exportCsv;
+$('#backup-import').onclick = () => $('#backup-file').click();
+$('#backup-file').onchange = async event => {
+  const file = event.target.files[0];
+  event.target.value = '';
+  if (!file) return;
+  try {
+    if (file.size > 256 * 1024 * 1024) {
+      $('#backup-dialog').close();
+      toast('备份超过 256 MB，无法在此页面导入');
+      return;
+    }
+    const data = JSON.parse(await file.text());
+    if (!validState(data)) throw new Error('invalid backup');
+    $('#backup-dialog').close();
+    confirmAction('从备份恢复？', `备份包含 ${data.records.length} 条推广调整、${data.orders?.length ?? 0} 笔订单和 ${data.dailyPlans?.length ?? 0} 项每日计划。将替换当前 ${state.records.length} 条调整、${state.orders.length} 笔订单和 ${state.dailyPlans.length} 项每日计划。`, () => {
+      state = normalizeState(data);
+      view = 'records';
+      resetFilters();
+      resetOrderFilters();
+      selected = '';
+      save('备份已恢复');
+    });
+  } catch {
+    $('#backup-dialog').close();
+    toast('无法恢复，请选择本工作台导出的有效 JSON 备份');
+  }
+};
+
+$('#add-change').onclick = () => appendChange();
+$('#add-images').onclick = () => $('#attachment-files').click();
+$('#attachment-files').onchange = event => {
+  const files = [...event.target.files];
+  event.target.value = '';
+  addAttachments(files);
+};
+$('#record-dialog').addEventListener('paste', event => {
+  const files = [...(event.clipboardData?.files ?? [])].filter(file => file.type.startsWith('image/'));
+  if (!files.length) return;
+  event.preventDefault();
+  addAttachments(files);
+});
+$('#record-dialog').addEventListener('close', () => {
+  if ($('#record-dialog').open) return;
+  attachmentDraft = null;
+  $('#attachment-draft').replaceChildren();
+});
+$('#image-dialog').addEventListener('close', () => $('#image-preview').removeAttribute('src'));
+$('#clear-filters').onclick = () => {resetFilters(); render();};
+$('#search').oninput = render;
+for (const selector of ['#plan-filter', '#type-filter', '#date-from', '#date-to']) $(selector).onchange = render;
+$('#order-search').oninput = render;
+for (const selector of ['#order-shop', '#order-received', '#order-reviewed', '#order-from', '#order-to']) $(selector).onchange = render;
+$('#order-reset').onclick = () => {resetOrderFilters(); render();};
+$('#order-export').onclick = exportOrderCsv;
+$('#order-list').addEventListener('change', event => {
+  const input = event.target;
+  if (!['received', 'reviewed'].includes(input.dataset.orderStatus)) return;
+  const order = orderFor(input.dataset.orderId);
+  if (!order) return;
+  order[input.dataset.orderStatus] = input.checked;
+  save('订单状态已保存');
+});
+
+document.addEventListener('click', event => {
+  const button = event.target.closest('button');
+  if (!button) return;
+  const data = button.dataset;
+  if (data.close) return $(`#${data.close}`).close();
+  if (data.view) {view = data.view; render(); return;}
+  if (handlePlannerClick(data)) return;
+  if (data.id) {
+    selected = data.id;
+    render();
+    const activeCard = $('.record.active');
+    activeCard?.focus({preventScroll:true});
+    if (window.innerWidth <= 1025) $('#detail').scrollIntoView({block:'start'});
+    return;
+  }
+  if (data.plan) {
+    view = 'records';
+    $('#plan-filter').value = data.plan;
+    render();
+    return;
+  }
+  const record = recordFor(selected);
+  switch (data.action) {
+    case 'new': openRecord(); break;
+    case 'new-order': openOrder(); break;
+    case 'edit-order': {
+      const order = orderFor(data.orderId);
+      if (order) openOrder(order);
+      break;
+    }
+    case 'delete-order': {
+      const order = orderFor(data.orderId);
+      if (order) confirmAction('删除登记订单？', `将删除「${order.shop}」的订单 ${order.number} 及其收货、评价状态。`, () => {
+        state.orders = state.orders.filter(item => item.id !== order.id);
+        save('订单已删除');
+      });
+      break;
+    }
+    case 'reset-orders': resetOrderFilters(); render(); break;
+    case 'edit': if (record) openRecord(record); break;
+    case 'effect': if (record) openEffect(record); break;
+    case 'preview-image': {
+      const images = data.source === 'draft' ? attachmentDraft?.images : record?.attachments;
+      showImage(images?.[Number(data.index)]);
+      break;
+    }
+    case 'remove-image':
+      if (attachmentDraft) {
+        attachmentDraft.images.splice(Number(data.index), 1);
+        if (!attachmentDraft.reading) $('#attachment-status').textContent = '';
+        renderAttachmentDraft();
+      }
+      break;
+    case 'remove-change':
+      button.closest('.change-field').remove();
+      if (!$$('.change-field').length) appendChange();
+      break;
+    case 'delete':
+      if (record) confirmAction('删除调整记录？', `将删除「${record.plan}」在 ${formatTime(record.time)} 的调整及其效果数据。`, () => {
+        state.records = state.records.filter(item => item.id !== record.id);
+        save('记录已删除');
+      });
+      break;
+    case 'reset': resetFilters(); render(); break;
+    case 'demo':
+      if (!state.records.length) {state.records = demoRecords(); view = 'records'; resetFilters(); save('已载入两条示例，可逐条删除');}
+      break;
+  }
+});
+
+window.addEventListener('beforeunload', event => {
+  if (unsaved) {event.preventDefault(); event.returnValue = '';}
+});
+async function initialize() {
+  const shell = $('.shell');
+  shell.inert = true;
+  $('#storage-status').textContent = '正在读取本地记录…';
+  await loadState();
+  $('#storage-status').textContent = readError || '数据自动保存到此浏览器';
+  render();
+  shell.inert = false;
+  if (readError) toast(readError);
+}
+
+
+const dailyPriorities = {high: '高优先', normal: '普通', low: '低优先'};
+const priorityRank = {high: 0, normal: 1, low: 2};
+const firstPlannerDate = '0100-01-01';
+const lastPlannerDate = '9999-12-31';
+let planDate = today();
+let calendarMonth = planDate.slice(0, 7);
+let editingDailyId = '';
+
+function validPlannerDate(value) {
+  return isDate(value) && value >= firstPlannerDate && value <= lastPlannerDate;
+}
+
+function validDailyPlans(plans) {
+  if (!Array.isArray(plans) || plans.length > 20000) return false;
+  const ids = new Set();
+  return plans.every(plan => {
+    if (!plan || !isText(plan.id, 100) || !plan.id || ids.has(plan.id)) return false;
+    ids.add(plan.id);
+    return isText(plan.title, 160) && plan.title.trim().length > 0 && validPlannerDate(plan.date) &&
+      typeof plan.time === 'string' && (plan.time === '' || /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(plan.time)) &&
+      Object.hasOwn(dailyPriorities, plan.priority) && typeof plan.done === 'boolean' && isText(plan.note, 2000);
+  });
+}
+
+function plannerDate(value) {
+  return new Date(`${value}T12:00:00`);
+}
+
+function setPlannerDate(value) {
+  if (!validPlannerDate(value)) return false;
+  planDate = value;
+  calendarMonth = value.slice(0, 7);
+  return true;
+}
+
+function calendarDays(month) {
+  const start = plannerDate(`${month}-01`);
+  start.setDate(1 - (start.getDay() + 6) % 7);
+  return Array.from({length: 42}, (_, index) => {
+    const date = new Date(start);
+    date.setDate(start.getDate() + index);
+    return dateString(date);
+  });
+}
+
+function shiftPlannerDay(offset) {
+  const date = plannerDate(planDate);
+  date.setDate(date.getDate() + offset);
+  if (setPlannerDate(dateString(date))) render();
+}
+
+function shiftCalendarMonth(offset) {
+  const date = plannerDate(`${calendarMonth}-01`);
+  date.setMonth(date.getMonth() + offset);
+  if (setPlannerDate(dateString(date))) render();
+}
+
+function plansForDay(date = planDate) {
+  return state.dailyPlans.filter(plan => plan.date === date).sort((a, b) =>
+    Number(a.done) - Number(b.done) || (a.time || '99:99').localeCompare(b.time || '99:99') ||
+    priorityRank[a.priority] - priorityRank[b.priority] || a.title.localeCompare(b.title, 'zh-CN'));
+}
+
+function renderCalendar() {
+  const monthDate = plannerDate(`${calendarMonth}-01`);
+  $('#calendar-month').textContent = `${monthDate.getFullYear()} 年 ${monthDate.getMonth() + 1} 月`;
+  $('#calendar-prev').disabled = calendarMonth === firstPlannerDate.slice(0, 7);
+  $('#calendar-next').disabled = calendarMonth === lastPlannerDate.slice(0, 7);
+  const counts = new Map();
+  for (const plan of state.dailyPlans) {
+    if (!counts.has(plan.date)) counts.set(plan.date, {total: 0, pending: 0});
+    const count = counts.get(plan.date);
+    count.total++;
+    if (!plan.done) count.pending++;
+  }
+  const currentDay = today();
+  $('#calendar-grid').innerHTML = calendarDays(calendarMonth).map(date => {
+    const count = counts.get(date);
+    const selectedDate = date === planDate;
+    const isToday = date === currentDay;
+    const outsideMonth = date.slice(0, 7) !== calendarMonth;
+    const marker = count ? `<span class="calendar-day-count ${count.pending ? '' : 'completed'}">${count.pending ? `${count.pending} 待办` : '已完成'}</span>` : '';
+    return `<button type="button" class="calendar-day ${selectedDate ? 'selected' : ''} ${isToday ? 'today' : ''} ${outsideMonth ? 'outside-month' : ''}"
+      data-calendar-date="${date}" aria-pressed="${selectedDate}" ${isToday ? 'aria-current="date"' : ''}
+      ${validPlannerDate(date) ? '' : 'disabled'} aria-label="${date}${isToday ? ' 今天' : ''}，${count ? `${count.total} 项计划，${count.pending} 项待完成` : '暂无计划'}">
+      <span class="calendar-day-number">${Number(date.slice(-2))}</span>${marker}</button>`;
+  }).join('');
+}
+
+function dailyPlanRow(plan) {
+  return `<div class="daily-row ${plan.done ? 'is-done' : ''}">
+    <input class="daily-check" type="checkbox" data-daily-toggle="${escape(plan.id)}" ${plan.done ? 'checked' : ''} aria-label="${plan.done ? '重新打开' : '完成'}计划 ${escape(plan.title)}">
+    <span class="daily-time">${plan.time || '不限时'}</span>
+    <button type="button" class="daily-summary" data-action="edit-daily" data-daily-id="${escape(plan.id)}" aria-label="编辑计划 ${escape(plan.title)}"><strong>${escape(plan.title)}</strong>${plan.note ? `<span>${escape(plan.note)}</span>` : ''}</button>
+    <span class="daily-priority ${plan.priority}">${dailyPriorities[plan.priority]}</span>
+  </div>`;
+}
+
+function renderPlanner() {
+  const dailyView = view === 'daily';
+  $('#planner-workspace').classList.toggle('daily-view', dailyView);
+  $('#calendar-panel').hidden = dailyView;
+  const plans = plansForDay();
+  const done = plans.filter(plan => plan.done).length;
+  const remaining = plans.length - done;
+  const percentage = plans.length ? Math.round(done / plans.length * 100) : 0;
+  const stats = [['当天计划', plans.length, ''], ['待完成', remaining, 'pending'], ['已完成', done, 'done'], ['完成进度', `${percentage}%`, '']];
+  $('#stats').innerHTML = stats.map(([label, value, color]) => `<div class="stat ${color}"><strong>${value}</strong><span>${label}</span></div>`).join('');
+  const date = plannerDate(planDate);
+  $('#daily-title').textContent = new Intl.DateTimeFormat('zh-CN', {month: 'long', day: 'numeric', weekday: 'long'}).format(date);
+  $('#daily-caption').textContent = `${planDate} · ${plans.length} 项工作计划`;
+  $('#daily-date').value = planDate;
+  $('#daily-prev').disabled = planDate === firstPlannerDate;
+  $('#daily-next').disabled = planDate === lastPlannerDate;
+  $('#daily-progress').value = percentage;
+  $('#daily-progress-text').textContent = `已完成 ${done} / ${plans.length} 项`;
+  $('#daily-progress-percent').textContent = `${percentage}%`;
+  if (!plans.length) {
+    $('#daily-list').innerHTML = empty('这一天还没有工作计划', '添加一项具体的工作，从清晰的安排开始。', '<button type="button" class="primary" data-action="new-daily">＋ 添加计划</button>');
+  } else {
+    $('#daily-list').innerHTML = [[false, '待完成', remaining], [true, '已完成', done]].filter(([, , count]) => count > 0).map(([finished, label, count]) =>
+      `<section class="daily-group"><h3>${label}<span>${count}</span></h3>${plans.filter(plan => plan.done === finished).map(dailyPlanRow).join('')}</section>`).join('');
+  }
+  if (!dailyView) renderCalendar();
+}
+
+function openDailyPlan(plan) {
+  editingDailyId = plan?.id ?? '';
+  const form = $('#daily-form');
+  form.reset();
+  form.elements.title.value = plan?.title ?? '';
+  form.elements.date.value = plan?.date ?? planDate;
+  form.elements.time.value = plan?.time ?? '';
+  form.elements.priority.value = plan?.priority ?? 'normal';
+  form.elements.done.value = plan?.done ? 'yes' : 'no';
+  form.elements.note.value = plan?.note ?? '';
+  $('#daily-form-title').textContent = plan ? '编辑工作计划' : '添加工作计划';
+  $('#daily-delete').hidden = !plan;
+  $('#daily-error').textContent = '';
+  $('#daily-dialog').showModal();
+  form.elements.title.focus();
+}
+
+$('#daily-form').onsubmit = event => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const plan = {id: editingDailyId || newId(), title: form.get('title').trim(), date: form.get('date'),
+    time: form.get('time'), priority: form.get('priority'), done: form.get('done') === 'yes', note: form.get('note').trim()};
+  if (!validDailyPlans([plan])) {
+    $('#daily-error').textContent = '请填写工作内容、有效日期和时间。';
+    return;
+  }
+  if (editingDailyId && !state.dailyPlans.some(item => item.id === editingDailyId)) {
+    $('#daily-error').textContent = '这项计划已经不存在，请关闭窗口后重试。';
+    return;
+  }
+  if (!editingDailyId && state.dailyPlans.length >= 20000) {
+    $('#daily-error').textContent = '每日计划已达 20000 项上限，请先导出备份整理。';
+    return;
+  }
+  if (editingDailyId) state.dailyPlans = state.dailyPlans.map(item => item.id === editingDailyId ? plan : item);
+  else state.dailyPlans.push(plan);
+  setPlannerDate(plan.date);
+  $('#daily-dialog').close();
+  save(editingDailyId ? '工作计划已更新' : '工作计划已保存');
+};
+
+$('#daily-delete').onclick = () => {
+  const plan = state.dailyPlans.find(item => item.id === editingDailyId);
+  if (!plan) return;
+  confirmAction('删除工作计划？', `将删除 ${plan.date} 的「${plan.title}」。`, () => {
+    state.dailyPlans = state.dailyPlans.filter(item => item.id !== plan.id);
+    $('#daily-dialog').close();
+    save('工作计划已删除');
+  });
+};
+
+function handlePlannerClick(data) {
+  if (data.calendarDate) {
+    if (setPlannerDate(data.calendarDate)) {
+      render();
+      $('.calendar-day.selected')?.focus({preventScroll: true});
+    }
+    return true;
+  }
+  switch (data.action) {
+    case 'new-daily': openDailyPlan(); return true;
+    case 'edit-daily': {
+      const plan = state.dailyPlans.find(item => item.id === data.dailyId);
+      if (plan) openDailyPlan(plan);
+      return true;
+    }
+    case 'planner-today': setPlannerDate(today()); render(); return true;
+    default: return false;
+  }
+}
+
+function exportDailyCsv() {
+  const plans = plansForDay();
+  if (!plans.length) return toast('所选日期没有可导出的工作计划');
+  const header = ['日期', '时间', '工作内容', '优先级', '状态', '备注'];
+  const rows = plans.map(plan => [plan.date, plan.time, plan.title, dailyPriorities[plan.priority], plan.done ? '已完成' : '待完成', plan.note]);
+  download('\uFEFF' + [header, ...rows].map(row => row.map(csvCell).join(',')).join('\r\n'), `每日工作计划-${planDate}.csv`, 'text/csv;charset=utf-8');
+  $('#backup-dialog').close();
+  toast(`已导出 ${plans.length} 项工作计划`);
+}
+
+$('#calendar-prev').onclick = () => shiftCalendarMonth(-1);
+$('#calendar-next').onclick = () => shiftCalendarMonth(1);
+$('#daily-prev').onclick = () => shiftPlannerDay(-1);
+$('#daily-next').onclick = () => shiftPlannerDay(1);
+$('#daily-date').onchange = event => {
+  if (!setPlannerDate(event.target.value)) toast('请选择有效日期');
+  render();
+};
+$('#daily-export').onclick = exportDailyCsv;
+$('#daily-list').addEventListener('change', event => {
+  const plan = state.dailyPlans.find(item => item.id === event.target.dataset.dailyToggle);
+  if (!plan) return;
+  plan.done = event.target.checked;
+  save(plan.done ? '工作计划已完成' : '工作计划已重新打开');
+});
+
+function initializeGlass() {
+  if (typeof window.matchMedia !== 'function') return;
+
+  const root = document.documentElement;
+  const navigation = $('.sidebar nav');
+  const toolbar = $('.sidebar');
+  const transparency = $('#glass-transparency');
+  const motion = $('#glass-motion');
+  const key = 'taobao-workbench-appearance-v1';
+  const defaults = {transparency: 55, motion: true};
+  const scale = parseFloat(getComputedStyle(root).zoom) || 1;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+  let preferences = {...defaults};
+  let indicatorFrame = 0;
+  let lightFrame = 0;
+  let litSurface = null;
+  let pointer = null;
+
+  try {
+    const stored = JSON.parse(localStorage.getItem(key));
+    if (Number.isInteger(stored?.transparency) && stored.transparency >= 0 && stored.transparency <= 100) {
+      preferences.transparency = stored.transparency;
+    }
+    if (typeof stored?.motion === 'boolean') preferences.motion = stored.motion;
+  } catch { /* Defaults also work when browser storage is unavailable. */ }
+
+  function motionEnabled() {
+    return preferences.motion && !reduceMotion.matches;
+  }
+
+  function clearSurface() {
+    if (!litSurface) return;
+    litSurface.classList.remove('glass-tracked');
+    litSurface.style.removeProperty('--light-x');
+    litSurface.style.removeProperty('--light-y');
+    litSurface = null;
+  }
+
+  function clearLight() {
+    if (lightFrame) window.cancelAnimationFrame(lightFrame);
+    lightFrame = 0;
+    pointer = null;
+    clearSurface();
+    root.style.removeProperty('--ambient-x');
+    root.style.removeProperty('--ambient-y');
+  }
+
+  function applyPreferences() {
+    const amount = preferences.transparency / 100;
+    transparency.value = String(preferences.transparency);
+    $('#glass-percentage').value = `${preferences.transparency}%`;
+    motion.checked = motionEnabled();
+    motion.disabled = reduceMotion.matches;
+    root.style.setProperty('--glass-alpha', (.99 - .81 * amount).toFixed(2));
+    root.style.setProperty('--hero-edge-alpha', (.98 - .82 * amount).toFixed(2));
+    root.style.setProperty('--panel-alpha', (.99 - .35 * amount).toFixed(2));
+    root.style.setProperty('--dialog-alpha', (.99 - .16 * amount).toFixed(2));
+    root.style.setProperty('--glass-motion', motionEnabled() ? '1' : '0');
+    root.dataset.glassMotion = motionEnabled() ? 'on' : 'off';
+    if (!motionEnabled()) clearLight();
+  }
+
+  function rememberPreferences() {
+    applyPreferences();
+    try {localStorage.setItem(key, JSON.stringify(preferences));} catch { /* The current page still applies the setting. */ }
+  }
+
+  function positionIndicator() {
+    if (indicatorFrame) return;
+    indicatorFrame = window.requestAnimationFrame(() => {
+      indicatorFrame = 0;
+      const active = navigation.querySelector('button.active');
+      if (!active || !active.offsetWidth) return;
+      navigation.style.setProperty('--pill-x', `${active.offsetLeft}px`);
+      navigation.style.setProperty('--pill-y', `${active.offsetTop}px`);
+      navigation.style.setProperty('--pill-width', `${active.offsetWidth}px`);
+      navigation.style.setProperty('--pill-height', `${active.offsetHeight}px`);
+      navigation.dataset.indicator = '';
+    });
+  }
+
+  function paintLight() {
+    lightFrame = 0;
+    if (!pointer) return;
+    const {x, y, surface} = pointer;
+    const bounds = surface?.getBoundingClientRect();
+    if (litSurface !== surface) {
+      clearSurface();
+      litSurface = surface;
+    }
+    if (bounds) {
+      surface.style.setProperty('--light-x', `${(x - bounds.left) / scale}px`);
+      surface.style.setProperty('--light-y', `${(y - bounds.top) / scale}px`);
+      surface.classList.add('glass-tracked');
+    }
+    root.style.setProperty('--ambient-x', `${x / scale}px`);
+    root.style.setProperty('--ambient-y', `${y / scale}px`);
+  }
+
+  $('#appearance-open').onclick = () => $('#appearance-dialog').showModal();
+  transparency.oninput = () => {
+    preferences.transparency = Number(transparency.value);
+    rememberPreferences();
+  };
+  motion.onchange = () => {
+    preferences.motion = motion.checked;
+    rememberPreferences();
+  };
+  $('#appearance-reset').onclick = () => {
+    preferences = {...defaults};
+    rememberPreferences();
+  };
+  reduceMotion.addEventListener('change', applyPreferences);
+  finePointer.addEventListener('change', clearLight);
+
+  new MutationObserver(positionIndicator).observe(navigation, {subtree: true, attributes: true, attributeFilter: ['class'], childList: true, characterData: true});
+  if (typeof ResizeObserver === 'function') new ResizeObserver(positionIndicator).observe(navigation);
+  window.addEventListener('resize', positionIndicator);
+  window.addEventListener('scroll', () => toolbar.classList.toggle('is-scrolled', window.scrollY > 16), {passive: true});
+  window.addEventListener('pointermove', event => {
+    if (!motionEnabled() || !finePointer.matches || event.pointerType === 'touch') return;
+    const surface = event.target.closest?.('.primary, .secondary, .side-link, .stat, .sidebar, .hero, .panel') ?? null;
+    pointer = {x: event.clientX, y: event.clientY, surface};
+    if (!lightFrame) lightFrame = window.requestAnimationFrame(paintLight);
+  }, {passive: true});
+  root.addEventListener('pointerleave', clearLight);
+  window.addEventListener('blur', clearLight);
+  applyPreferences();
+  positionIndicator();
+}
+
+initializeGlass();
+initialize();
+</script>
+</body>
+</html>
+
